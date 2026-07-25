@@ -1,5 +1,5 @@
 /**
- * Notes Manager — Notion-like block editor with SuperCmd native UI
+ * Notes Manager — Notion-like block editor with Discov native UI
  *
  * Features:
  * - Block-based contentEditable editor with live rendering
@@ -7,7 +7,7 @@
  * - Notion-like slash command menu (/heading, /bullet, /todo, etc.)
  * - Drag-and-drop block reordering
  * - Clickable checkboxes
- * - Native SuperCmd styling (CSS variables, glass footer, back button)
+ * - Native Discov styling (CSS variables, glass footer, back button)
  * - Runs in a detached window (always on top)
  */
 
@@ -2113,7 +2113,7 @@ const NotesManager: React.FC<NotesManagerProps> = ({ initialView }) => {
         { title: 'Copy as HTML', icon: <Copy size={14} />, execute: async () => { await window.electron.noteCopyToClipboard(targetNote.id, 'html'); setShowActions(false); } },
         { title: 'Copy as Plain Text', icon: <Copy size={14} />, execute: async () => { await window.electron.noteCopyToClipboard(targetNote.id, 'plaintext'); setShowActions(false); } },
       ] });
-      a.push({ title: 'Copy Deeplink', icon: <Link2 size={14} />, shortcut: ['⇧', '⌘', 'D'], section: 'copy', execute: async () => { await navigator.clipboard.writeText(`supercmd://notes/${targetNote.id}`); setShowActions(false); } });
+      a.push({ title: 'Copy Deeplink', icon: <Link2 size={14} />, shortcut: ['⇧', '⌘', 'D'], section: 'copy', execute: async () => { await navigator.clipboard.writeText(`discov://notes/${targetNote.id}`); setShowActions(false); } });
       a.push({ title: 'Export...', icon: <Upload size={14} />, shortcut: ['⇧', '⌘', 'E'], section: 'copy', execute: () => handleExport() });
     }
     if (targetNote) a.push({ title: targetNote.pinned ? 'Unpin Note' : 'Pin Note', icon: targetNote.pinned ? <PinOff size={14} /> : <Pin size={14} />, shortcut: ['⇧', '⌘', 'P'], section: 'settings', execute: () => handleTogglePin() });

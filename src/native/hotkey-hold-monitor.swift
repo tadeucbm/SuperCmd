@@ -124,7 +124,7 @@ guard let eventTap = CGEvent.tapCreate(
     userInfo: statePtr
 ) else {
     emit([
-        "error": "Failed to create event tap. Enable Input Monitoring/Accessibility permissions for SuperCmd."
+        "error": "Failed to create event tap. Enable Input Monitoring/Accessibility permissions for Discov."
     ])
     exit(2)
 }

@@ -4,7 +4,7 @@
  * Multi-turn AI chat panel (Raycast-style, single-column).
  * Header: back arrow + single-line "Ask follow-up…" input
  * Body: list of QA cards; newest card scrolls to top (old cards slide up)
- * Footer: SuperCmd logo + "Ask AI" label, plain "Actions ⌘K" text button
+ * Footer: Discov logo + "Ask AI" label, plain "Actions ⌘K" text button
  *
  * Popups:
  * - Actions overlay: mirrors NotesManager ActionsOverlay (bottom-right panel, search)
@@ -16,7 +16,7 @@ import { ArrowLeft, Plus, ChevronLeft, ChevronRight, History, Trash2, Eraser, Sp
 import { renderSimpleMarkdown } from '../raycast-api/detail-markdown';
 import type { AiMessage, AiConversation } from '../hooks/useAiChat';
 import ConfirmDeleteDialog from '../components/ConfirmDeleteDialog';
-import supercmdLogo from '../../../../supercmd.png';
+import discovLogo from '../../../../discov.png';
 
 interface AiChatViewProps {
   alwaysMountedRunners: React.ReactNode;
@@ -791,7 +791,7 @@ const AiChatView: React.FC<AiChatViewProps> = ({
           {/* Footer (launcher-style: plain text + kbd badges, no pill) */}
           <div className="sc-glass-footer sc-launcher-footer px-4 py-2.5 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
-              <img src={supercmdLogo} alt="SuperCmd" className="w-4 h-4 rounded-sm" />
+              <img src={discovLogo} alt="Discov" className="w-4 h-4 rounded-sm" />
               <span className="text-[12px] text-[var(--text-primary)]">Ask AI</span>
             </div>
             <div className="flex items-center gap-3">

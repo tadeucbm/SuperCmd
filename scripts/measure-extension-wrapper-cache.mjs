@@ -13,7 +13,7 @@ const {
   getCompiledExtensionWrapperCacheStats,
 } = await importTs(path.join(root, 'src/renderer/src/utils/extension-wrapper-cache.ts'));
 
-const ITERATIONS = Number.parseInt(process.env.SUPERCMD_WRAPPER_MEASURE_ITERATIONS || '1000', 10);
+const ITERATIONS = Number.parseInt(process.env.DISCOV_WRAPPER_MEASURE_ITERATIONS || '1000', 10);
 
 function patchSchemeDynamicImports(sourceCode) {
   return String(sourceCode || '').replace(

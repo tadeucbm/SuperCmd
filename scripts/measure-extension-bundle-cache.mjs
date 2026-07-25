@@ -11,7 +11,7 @@ import { performance } from 'node:perf_hooks';
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const iterations = Number.parseInt(process.env.SUPERCMD_EXTENSION_BUNDLE_MEASURE_ITERATIONS || '20', 10);
+const iterations = Number.parseInt(process.env.DISCOV_EXTENSION_BUNDLE_MEASURE_ITERATIONS || '20', 10);
 
 export function createFixture() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sc-extension-bundle-cache-'));

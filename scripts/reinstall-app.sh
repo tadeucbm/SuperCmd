@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Rebuild SuperCmd from this checkout and reinstall it into /Applications.
+# Rebuild Discov from this checkout and reinstall it into /Applications.
 #
 # Steps: quit any running copy → remove the old bundle → reset its macOS
 # privacy permissions → build + package → install → relaunch.
@@ -16,8 +16,8 @@
 #
 set -euo pipefail
 
-APP_NAME="SuperCmd"
-BUNDLE_ID="com.supercmd.app"
+APP_NAME="Discov"
+BUNDLE_ID="com.discov.app"
 DEST="/Applications/${APP_NAME}.app"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -50,7 +50,7 @@ run() {
 
 usage() {
   cat <<'EOF'
-Rebuild SuperCmd from this checkout and reinstall it into /Applications.
+Rebuild Discov from this checkout and reinstall it into /Applications.
 
 Steps: quit any running copy -> remove the old bundle -> reset its macOS
 privacy permissions -> build + package -> install -> relaunch.

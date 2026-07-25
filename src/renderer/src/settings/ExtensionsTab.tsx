@@ -25,7 +25,7 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import supercmdLogo from '../../../../supercmd.svg';
+import discovLogo from '../../../../discov.svg';
 import HotkeyRecorder from './HotkeyRecorder';
 import type {
   AppSettings,
@@ -71,7 +71,7 @@ function isPreferenceMissing(pref: ExtensionPreferenceSchema, value: any): boole
 const normalizeMatchKey = (value: string): string =>
   value.trim().toLowerCase().replace(/[\s_]+/g, '-');
 
-const SUPERCMD_EXTENSION_NAME = '__supercmd';
+const DISCOV_EXTENSION_NAME = '__discov';
 const SCRIPT_COMMANDS_EXTENSION_NAME = '__script_commands';
 const INSTALLED_APPLICATIONS_NAME = '__installed_applications';
 const SYSTEM_SETTINGS_NAME = '__system_settings';
@@ -252,7 +252,7 @@ const ExtensionsTab: React.FC<{
         continue;
       }
       if (cmd.category === 'system') {
-        map.set(`${SUPERCMD_EXTENSION_NAME}/${cmd.id}`, cmd);
+        map.set(`${DISCOV_EXTENSION_NAME}/${cmd.id}`, cmd);
         continue;
       }
       if (cmd.category === 'app') {
@@ -325,11 +325,11 @@ const ExtensionsTab: React.FC<{
 
     const systemCommands = commands.filter((cmd) => cmd.category === 'system');
     if (systemCommands.length > 0) {
-      byExt.set(SUPERCMD_EXTENSION_NAME, {
-        extName: SUPERCMD_EXTENSION_NAME,
-        title: t('settings.extensions.builtIn.superCmd.title'),
-        description: t('settings.extensions.builtIn.superCmd.description'),
-        owner: 'supercmd',
+      byExt.set(DISCOV_EXTENSION_NAME, {
+        extName: DISCOV_EXTENSION_NAME,
+        title: t('settings.extensions.builtIn.discov.title'),
+        description: t('settings.extensions.builtIn.discov.description'),
+        owner: 'discov',
         iconDataUrl: undefined,
         preferences: [],
         commands: systemCommands.map((cmd) => ({
@@ -350,7 +350,7 @@ const ExtensionsTab: React.FC<{
         extName: SCRIPT_COMMANDS_EXTENSION_NAME,
         title: t('settings.extensions.builtIn.scriptCommands.title'),
         description: t('settings.extensions.builtIn.scriptCommands.description'),
-        owner: 'supercmd',
+        owner: 'discov',
         iconDataUrl: undefined,
         preferences: [],
         commands: scriptCommands.map((cmd) => ({
@@ -375,7 +375,7 @@ const ExtensionsTab: React.FC<{
         extName: INSTALLED_APPLICATIONS_NAME,
         title: t('settings.extensions.builtIn.applications.title'),
         description: t('settings.extensions.builtIn.applications.description'),
-        owner: 'supercmd',
+        owner: 'discov',
         iconDataUrl: finderIcon || fallbackIcon,
         preferences: [],
         commands: installedApplications.map((cmd) => ({
@@ -398,7 +398,7 @@ const ExtensionsTab: React.FC<{
         extName: SYSTEM_SETTINGS_NAME,
         title: t('settings.extensions.builtIn.systemSettings.title'),
         description: t('settings.extensions.builtIn.systemSettings.description'),
-        owner: 'supercmd',
+        owner: 'discov',
         iconDataUrl: systemSettingsCommands.find((cmd) => Boolean(cmd.iconDataUrl))?.iconDataUrl,
         preferences: [],
         commands: systemSettingsCommands.map((cmd) => ({
@@ -414,8 +414,8 @@ const ExtensionsTab: React.FC<{
     }
 
     return Array.from(byExt.values()).sort((a, b) => {
-      if (a.extName === SUPERCMD_EXTENSION_NAME) return -1;
-      if (b.extName === SUPERCMD_EXTENSION_NAME) return 1;
+      if (a.extName === DISCOV_EXTENSION_NAME) return -1;
+      if (b.extName === DISCOV_EXTENSION_NAME) return 1;
       if (a.extName === INSTALLED_APPLICATIONS_NAME) return -1;
       if (b.extName === INSTALLED_APPLICATIONS_NAME) return 1;
       if (a.extName === SYSTEM_SETTINGS_NAME) return -1;
@@ -743,7 +743,7 @@ const ExtensionsTab: React.FC<{
     : undefined;
 
   const getSchemaTypeLabel = (extName: string): string => {
-    if (extName === SUPERCMD_EXTENSION_NAME) return t('settings.extensions.types.builtIn');
+    if (extName === DISCOV_EXTENSION_NAME) return t('settings.extensions.types.builtIn');
     if (extName === INSTALLED_APPLICATIONS_NAME) return t('settings.extensions.types.apps');
     if (extName === SYSTEM_SETTINGS_NAME) return t('settings.extensions.types.settings');
     if (extName === SCRIPT_COMMANDS_EXTENSION_NAME) return t('settings.extensions.types.scripts');
@@ -1246,8 +1246,8 @@ const ExtensionsTab: React.FC<{
                       )}
                       {(schema.iconDataUrl || extensionIconFallbackByName.get(schema.extName)) ? (
                         <img src={schema.iconDataUrl || extensionIconFallbackByName.get(schema.extName)} alt="" className="w-4 h-4 rounded-sm object-contain" draggable={false} />
-                      ) : schema.extName === SUPERCMD_EXTENSION_NAME ? (
-                        <img src={supercmdLogo} alt="" className="w-4 h-4 object-contain" draggable={false} />
+                      ) : schema.extName === DISCOV_EXTENSION_NAME ? (
+                        <img src={discovLogo} alt="" className="w-4 h-4 object-contain" draggable={false} />
                       ) : schema.extName === SYSTEM_SETTINGS_NAME ? (
                         <Settings className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0" />
                       ) : schema.extName === INSTALLED_APPLICATIONS_NAME ? (
@@ -1295,7 +1295,7 @@ const ExtensionsTab: React.FC<{
                           >
                             {commandInfo?.iconDataUrl ? (
                               <img src={commandInfo.iconDataUrl} alt="" className="w-3.5 h-3.5 rounded-sm object-contain flex-shrink-0" draggable={false} />
-                            ) : schema.extName === SUPERCMD_EXTENSION_NAME ? (
+                            ) : schema.extName === DISCOV_EXTENSION_NAME ? (
                               getCoreCommandIcon(commandInfo?.id)
                             ) : schema.extName === INSTALLED_APPLICATIONS_NAME || schema.extName === SYSTEM_SETTINGS_NAME ? (
                               getSystemExtensionCommandIcon(commandInfo)
@@ -1442,8 +1442,8 @@ const ExtensionsTab: React.FC<{
                 <div className="flex items-center gap-2">
                   {selectedSchema.iconDataUrl ? (
                     <img src={selectedSchema.iconDataUrl} alt="" className="w-5 h-5 rounded object-contain" draggable={false} />
-                  ) : selectedSchema.extName === SUPERCMD_EXTENSION_NAME ? (
-                    <img src={supercmdLogo} alt="" className="w-5 h-5 object-contain" draggable={false} />
+                  ) : selectedSchema.extName === DISCOV_EXTENSION_NAME ? (
+                    <img src={discovLogo} alt="" className="w-5 h-5 object-contain" draggable={false} />
                   ) : selectedSchema.extName === SYSTEM_SETTINGS_NAME ? (
                     <Settings className="w-5 h-5 text-[var(--text-muted)]" />
                   ) : selectedSchema.extName === INSTALLED_APPLICATIONS_NAME ? (

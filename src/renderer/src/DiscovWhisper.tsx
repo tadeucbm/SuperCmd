@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { formatShortcutForDisplay } from './utils/hyper-key';
 import { useI18n } from './i18n';
 
-interface SuperCmdWhisperProps {
+interface DiscovWhisperProps {
   onClose: () => void;
   portalTarget?: HTMLElement | null;
   onboardingCaptureMode?: boolean;
@@ -387,7 +387,7 @@ function encodeWavePcm16(samples: Float32Array, sampleRate: number): ArrayBuffer
   return buffer;
 }
 
-const SuperCmdWhisper: React.FC<SuperCmdWhisperProps> = ({
+const DiscovWhisper: React.FC<DiscovWhisperProps> = ({
   onClose,
   portalTarget,
   onboardingCaptureMode = false,
@@ -722,7 +722,7 @@ const SuperCmdWhisper: React.FC<SuperCmdWhisperProps> = ({
       const settings = await window.electron.getSettings();
       const language = settings.ai.speechLanguage || 'en-US';
       setSpeechLanguage(language);
-      const speakToggleHotkey = settings.commandHotkeys?.['system-supercmd-whisper-speak-toggle'] ?? '';
+      const speakToggleHotkey = settings.commandHotkeys?.['system-discov-whisper-speak-toggle'] ?? '';
       speakToggleShortcutRef.current = speakToggleHotkey;
       setSpeakToggleShortcutLabel(formatShortcutLabel(speakToggleHotkey));
 
@@ -2280,4 +2280,4 @@ const SuperCmdWhisper: React.FC<SuperCmdWhisperProps> = ({
   );
 };
 
-export default SuperCmdWhisper;
+export default DiscovWhisper;

@@ -355,7 +355,7 @@ export async function exportNotesToFile(parentWindow?: BrowserWindow): Promise<b
   const dialogOptions: SaveDialogOptions = {
     title: 'Export Notes',
     defaultPath: 'notes.json',
-    filters: [{ name: 'SuperCmd Notes', extensions: ['json'] }],
+    filters: [{ name: 'Discov Notes', extensions: ['json'] }],
   };
   const result = parentWindow
     ? await dialog.showSaveDialog(parentWindow, dialogOptions)
@@ -366,7 +366,7 @@ export async function exportNotesToFile(parentWindow?: BrowserWindow): Promise<b
   const all = getAllNotes();
   const exportData: NoteExportFile = {
     version: 1,
-    app: 'SuperCmd',
+    app: 'Discov',
     type: 'notes',
     exportedAt: new Date().toISOString(),
     notes: all.map((n) => ({
@@ -411,7 +411,7 @@ export async function importNotesFromFile(
       const data = fs.readFileSync(filePath, 'utf-8');
 
       if (ext === '.json') {
-        // Try parsing as SuperCmd notes export
+        // Try parsing as Discov notes export
         const parsed = JSON.parse(data);
         let rawItems: any[] = [];
 

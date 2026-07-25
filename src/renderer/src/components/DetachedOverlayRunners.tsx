@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { createPortal } from 'react-dom';
-import SuperCmdWhisper from '../SuperCmdWhisper';
-import SuperCmdRead from '../SuperCmdRead';
+import DiscovWhisper from '../DiscovWhisper';
+import DiscovRead from '../DiscovRead';
 import WindowManagerPanel from '../WindowManagerPanel';
 import type { SpeakStatus } from '../hooks/useSpeakManager';
 import type { UseCursorPromptReturn } from '../hooks/useCursorPrompt';
@@ -87,7 +87,7 @@ const DetachedOverlayRunners: React.FC<DetachedOverlayRunnersProps> = ({
   return (
     <>
       {showWhisper && whisperPortalTarget ? (
-        <SuperCmdWhisper
+        <DiscovWhisper
           portalTarget={whisperPortalTarget}
           startToken={whisperStartToken}
           onboardingCaptureMode={showWhisperOnboarding}
@@ -98,7 +98,7 @@ const DetachedOverlayRunners: React.FC<DetachedOverlayRunnersProps> = ({
         />
       ) : null}
       {showSpeak && speakPortalTarget ? (
-        <SuperCmdRead
+        <DiscovRead
           status={speakStatus}
           voice={speakOptions.voice}
           voiceOptions={readVoiceOptions}

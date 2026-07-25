@@ -2,7 +2,7 @@
 
 ## Overview
 
-SuperCmd installs Raycast-compatible extensions without requiring git or npm on the user's machine. Extensions are discovered via a backend API (supercmd-backend) backed by a PostgreSQL database and S3 storage.
+Discov installs Raycast-compatible extensions without requiring git or npm on the user's machine. Extensions are discovered via a backend API (supercmd-backend) backed by a PostgreSQL database and S3 storage.
 
 ---
 
@@ -63,14 +63,14 @@ When a user installs an extension, three methods are tried in order:
 
 1. **Backend API** (`GET /extensions/catalog`) — returns full catalog from DB
 2. **Git sparse-checkout** — clones only `package.json` files (requires git)
-3. **Disk cache** — `~/Library/Application Support/SuperCmd/extension-catalog.json` (even if expired)
+3. **Disk cache** — `~/Library/Application Support/Discov/extension-catalog.json` (even if expired)
 
 ---
 
 ## Bun Manager (`src/main/bun-manager.ts`)
 
 - Downloads the Bun binary on-demand when first needed (~50MB)
-- Cached at `~/Library/Application Support/SuperCmd/bun/bun`
+- Cached at `~/Library/Application Support/Discov/bun/bun`
 - Used instead of npm for installing extension dependencies (~25x faster)
 - Deletes lockfiles (`package-lock.json`, `bun.lockb`, etc.) before running to avoid frozen lockfile errors
 - Shows "Setting up installer for first use…" status in the Store tab UI during first download
@@ -142,7 +142,7 @@ When a user installs an extension, three methods are tried in order:
 - `extension-install-status` → main→renderer push for install progress messages
 
 ### Settings
-- `extensionApiUrl` — backend URL (defaults to `https://api.supercmd.com`, currently `http://localhost:3001` in dev)
+- `extensionApiUrl` — backend URL (defaults to the upstream `https://api.supercmd.sh`; see the rebrand TODO in `src/main/extension-api.ts`)
 
 ---
 
@@ -178,7 +178,7 @@ Icons and screenshots are served from `raw.githubusercontent.com` directly — n
 │       { "builtAt": "...", "prebuilt": true, "commands": [...] }
 ```
 
-No `node_modules` — all dependencies are bundled into the `.js` files by esbuild. `@raycast/api`, `react`, and Node builtins are marked as external (provided by the SuperCmd runtime).
+No `node_modules` — all dependencies are bundled into the `.js` files by esbuild. `@raycast/api`, `react`, and Node builtins are marked as external (provided by the Discov runtime).
 
 ---
 
@@ -215,5 +215,5 @@ rm -rf /tmp/catalog-output /tmp/build-output
 - `POST /extensions/:name/install` — called after successful install (fire-and-forget)
 - `POST /extensions/:name/uninstall` — called after uninstall
 - Optionally authenticated (JWT) — records `user_sub` if logged in, `machine_id` otherwise
-- Machine ID is a random UUID stored at `~/Library/Application Support/SuperCmd/.machine-id`
+- Machine ID is a random UUID stored at `~/Library/Application Support/Discov/.machine-id`
 - Install count is incremented on `extension_catalog.install_count` and visible in catalog responses

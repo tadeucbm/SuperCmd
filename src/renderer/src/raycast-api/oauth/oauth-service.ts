@@ -33,6 +33,11 @@ function createServerAuthorize(url: string, providerName: string): () => Promise
   };
 }
 
+// TODO(rebrand): the default clientIds and the api.supercmd.sh authorize URLs
+// below are upstream SuperCmd OAuth registrations. They are deliberately left
+// unrenamed — the proxy and the providers validate these exact values, so
+// changing them breaks extension sign-in. Replace them together with the
+// backend once Discov has its own OAuth apps.
 export class OAuthService extends OAuthServiceCore {
   static linear(options: OAuthFactoryOptions): OAuthService {
     const client = new PKCEClientCompat({

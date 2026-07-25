@@ -1,4 +1,4 @@
-# SuperCmd UI Improvements - Final Update
+# Discov UI Improvements - Final Update
 
 ## All Changes Completed ✅
 
@@ -108,7 +108,7 @@ Total size: 430KB (gzipped: 98KB)
 ## Ready to Use!
 
 Run `npm run dev` and test:
-1. Open SuperCmd (⌘Space)
+1. Open Discov (⌘Space)
 2. Type "Clipboard History"
 3. Copy some text/images
 4. Navigate with arrows

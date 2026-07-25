@@ -4,8 +4,8 @@
  * Compact grouped layout with horizontal tabs for:
  * - API Keys
  * - LLM
- * - SuperCmd Whisper
- * - SuperCmd Read
+ * - Discov Whisper
+ * - Discov Read
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -231,7 +231,7 @@ const EDGE_TTS_FALLBACK_VOICES: EdgeVoiceDef[] = [
   { id: 'es-ES-AlvaroNeural', label: 'Alvaro', languageCode: 'es-ES', languageLabel: 'Spanish (Spain)', gender: 'male' },
 ];
 
-const WHISPER_SPEAK_TOGGLE_COMMAND_ID = 'system-supercmd-whisper-speak-toggle';
+const WHISPER_SPEAK_TOGGLE_COMMAND_ID = 'system-discov-whisper-speak-toggle';
 
 type TabId = 'api-keys' | 'llm' | 'whisper' | 'speak';
 
@@ -1889,7 +1889,7 @@ const AITab: React.FC = () => {
                     onClick={async () => {
                       try {
                         setPreviewingVoice(true);
-                        const intro = `Hi, this is ${selectedEdgeVoice.label}. This is my voice in SuperCmd.`;
+                        const intro = `Hi, this is ${selectedEdgeVoice.label}. This is my voice in Discov.`;
                         await window.electron.speakPreviewVoice({
                           voice: selectedEdgeVoice.id,
                           text: intro,
@@ -2004,7 +2004,7 @@ const AITab: React.FC = () => {
                       try {
                         setPreviewingVoice(true);
                         const selectedVoice = ELEVENLABS_VOICES.find((v) => v.id === selectedElevenLabsVoiceId) || elevenLabsVoices.find((v) => v.id === selectedElevenLabsVoiceId);
-                        const intro = `Hi, this is ${selectedVoice?.label || selectedVoice?.name || 'my voice'} from ElevenLabs in SuperCmd.`;
+                        const intro = `Hi, this is ${selectedVoice?.label || selectedVoice?.name || 'my voice'} from ElevenLabs in Discov.`;
                         await window.electron.speakPreviewVoice({
                           provider: 'elevenlabs',
                           model: speakModelValue,

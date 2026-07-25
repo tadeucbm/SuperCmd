@@ -1,8 +1,8 @@
 {
-  "name": "supercmd-canvas-app",
+  "name": "discov-canvas-app",
   "version": "1.0.0",
   "private": true,
-  "description": "Pre-built Excalidraw bundle for SuperCmd Canvas",
+  "description": "Pre-built Excalidraw bundle for Discov Canvas",
   "scripts": {
     "build": "node build.mjs",
     "package": "cd dist && tar -czf ../excalidraw-bundle.tgz ."

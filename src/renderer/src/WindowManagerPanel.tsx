@@ -544,17 +544,17 @@ function applyFineTunePreset(presetId: PresetId, target: ManagedWindow, area: Sc
   return next;
 }
 
-function isSuperCmdWindow(win: ManagedWindow | null | undefined): boolean {
+function isDiscovWindow(win: ManagedWindow | null | undefined): boolean {
   const appName = normalizeText(win?.application?.name).toLowerCase();
   const appPath = normalizeText((win as any)?.application?.path).toLowerCase();
   const title = normalizeText(win?.title).toLowerCase();
-  return appName.includes('supercmd') || appPath.includes('supercmd') || title.includes('supercmd');
+  return appName.includes('discov') || appPath.includes('discov') || title.includes('discov');
 }
 
 function isManageableWindow(win: ManagedWindow | null | undefined): win is ManagedWindow {
   if (!win) return false;
   if (!normalizeText(win.id)) return false;
-  if (isSuperCmdWindow(win)) return false;
+  if (isDiscovWindow(win)) return false;
   const width = Number(win.bounds?.size?.width || 0);
   const height = Number(win.bounds?.size?.height || 0);
   if (!Number.isFinite(width) || !Number.isFinite(height)) return false;

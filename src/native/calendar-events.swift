@@ -172,7 +172,7 @@ if promptOnly {
         canPrompt: canPrompt,
         error: (hasAccess || hasReadableAccess)
             ? nil
-            : "Calendar access is required. Allow SuperCmd in System Settings > Privacy & Security > Calendars."
+            : "Calendar access is required. Allow Discov in System Settings > Privacy & Security > Calendars."
     ))
     exit((hasAccess || hasReadableAccess) ? 0 : 1)
 }
@@ -199,7 +199,7 @@ guard hasAccess || hasReadableAccess else {
         events: [],
         requested: didRequest,
         canPrompt: canPrompt,
-        error: "Calendar access is required. Allow SuperCmd in System Settings > Privacy & Security > Calendars."
+        error: "Calendar access is required. Allow Discov in System Settings > Privacy & Security > Calendars."
     ))
     exit(1)
 }

@@ -1,4 +1,4 @@
-# Unified SuperCmd Design System ✅
+# Unified Discov Design System ✅
 
 ## All Changes Applied
 
@@ -148,4 +148,4 @@ Size: 429KB (97.9KB gzipped)
 ✅ **Bigger fonts** (12-16px range)
 ✅ **Glassier appearance** with enhanced blur and saturation
 
-The entire SuperCmd app now has a cohesive, professional design system! 🎨✨
+The entire Discov app now has a cohesive, professional design system! 🎨✨

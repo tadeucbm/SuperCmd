@@ -47,7 +47,7 @@ case .authorized:
     break
 case .denied:
     emit([
-        "error": "Speech recognition permission denied. Open System Settings -> Privacy & Security -> Speech Recognition to allow SuperCmd.",
+        "error": "Speech recognition permission denied. Open System Settings -> Privacy & Security -> Speech Recognition to allow Discov.",
         "speechStatus": "denied"
     ])
     exit(1)
@@ -98,7 +98,7 @@ if authOnly {
         "microphoneStatus": micStatusValue
     ]
     if micStatus != .authorized {
-        payload["error"] = "Microphone permission is required. Open System Settings -> Privacy & Security -> Microphone to allow SuperCmd."
+        payload["error"] = "Microphone permission is required. Open System Settings -> Privacy & Security -> Microphone to allow Discov."
     }
     emit(payload)
     exit(0)
@@ -106,7 +106,7 @@ if authOnly {
 
 if micStatus != .authorized {
     emit([
-        "error": "Microphone permission is required. Open System Settings -> Privacy & Security -> Microphone to allow SuperCmd.",
+        "error": "Microphone permission is required. Open System Settings -> Privacy & Security -> Microphone to allow Discov.",
         "microphoneStatus": micStatusValue
     ])
     exit(1)

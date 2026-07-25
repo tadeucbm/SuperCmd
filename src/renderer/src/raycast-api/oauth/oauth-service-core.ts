@@ -35,6 +35,9 @@ export class OAuthServiceCore {
     localStorage.setItem(key, trimmed);
   }
 
+  // TODO(rebrand): these managed authorize endpoints are still the upstream
+  // SuperCmd OAuth proxy. Extensions signing in with Spotify/Linear depend on
+  // it, so it stays until Discov hosts its own.
   protected getManagedAuthorizeUrl(): string | null {
     const providerId = String(this.options.client?.providerId || '').trim().toLowerCase();
     const providerName = String(this.options.client?.providerName || '').trim().toLowerCase();

@@ -259,7 +259,7 @@ export function useDetachedPortalWindow(
     }
     const portalRoot = ensurePortalRoot(childDoc);
     setPortalTarget(portalRoot);
-    const shouldFocusChild = options.name !== 'supercmd-whisper-window';
+    const shouldFocusChild = options.name !== 'discov-whisper-window';
     if (shouldFocusChild) {
       try {
         child.focus();

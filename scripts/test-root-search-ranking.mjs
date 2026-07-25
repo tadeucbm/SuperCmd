@@ -170,7 +170,7 @@ test('exact app wins over browser history containing the same term', () => {
 test('internal "Search Notes" extension outranks browser history containing the query', () => {
   // Regression (real report): searching "notes" surfaced only the macOS Notes
   // app, then a flood of browser History rows ("Astryk - test - Notes",
-  // "SuperCmd 1.0.23 release notes ...") that pushed the internal "Search Notes"
+  // "Discov 1.0.23 release notes ...") that pushed the internal "Search Notes"
   // extension command out of the top Results entirely. Internal commands must
   // take precedence over organic browser results, which have their own Browser
   // section below.
@@ -186,7 +186,7 @@ test('internal "Search Notes" extension outranks browser history containing the 
   assert.equal(searchNotes.matchKind, 'token-prefix');
   const histories = [
     { id: 'hist-astryk-test', title: 'Astryk - test - Notes', url: 'https://app.astryk.com/test' },
-    { id: 'hist-release-notes', title: 'SuperCmd 1.0.23 release notes grammar check', url: 'https://claude.ai/chat/abc' },
+    { id: 'hist-release-notes', title: 'Discov 1.0.23 release notes grammar check', url: 'https://claude.ai/chat/abc' },
     { id: 'hist-pr-notes', title: 'Dictation crash fixes + launcher / notes UX polish', url: 'https://github.com/x/pull/472' },
   ].map((h) =>
     candidate({
@@ -294,49 +294,49 @@ test('bookmark nickname is a protected tier-one match', () => {
 });
 
 test('default protected trust order prefers app, nickname, file, folder', () => {
-  const query = 'SuperCmd';
-  const app = candidate({ query, id: 'app-supercmd', title: 'SuperCmd', subtype: 'app' });
+  const query = 'Discov';
+  const app = candidate({ query, id: 'app-discov', title: 'Discov', subtype: 'app' });
   const nickname = candidate({
     query,
-    id: 'nick-supercmd',
-    title: 'SuperCmd',
+    id: 'nick-discov',
+    title: 'Discov',
     subtype: 'nickname',
-    fields: [{ value: 'SuperCmd', kind: 'nickname' }],
+    fields: [{ value: 'Discov', kind: 'nickname' }],
   });
   const file = candidate({
     query,
-    id: 'file-supercmd',
-    title: 'SuperCmd',
+    id: 'file-discov',
+    title: 'Discov',
     subtype: 'file',
     pathLocationBoost: 120,
     freshnessBoost: 120,
   });
   const folder = candidate({
     query,
-    id: 'folder-supercmd',
-    title: 'SuperCmd',
+    id: 'folder-discov',
+    title: 'Discov',
     subtype: 'folder',
     pathLocationBoost: 120,
     freshnessBoost: 120,
   });
   assert.deepEqual(
     rankRootSearchCandidates([folder, file, nickname, app]).map((item) => item.command.id),
-    ['app-supercmd', 'nick-supercmd', 'file-supercmd', 'folder-supercmd']
+    ['app-discov', 'nick-discov', 'file-discov', 'folder-discov']
   );
 });
 
 test('exact app beats fresh download installer with same prefix', () => {
-  const query = 'SuperCmd';
-  const app = candidate({ query, id: 'app-supercmd', title: 'SuperCmd', subtype: 'app' });
+  const query = 'Discov';
+  const app = candidate({ query, id: 'app-discov', title: 'Discov', subtype: 'app' });
   const dmg = candidate({
     query,
-    id: 'file-supercmd-dmg',
-    title: 'SuperCmd-1.0.23-arm64.dmg',
+    id: 'file-discov-dmg',
+    title: 'Discov-1.0.23-arm64.dmg',
     subtype: 'file',
     pathLocationBoost: 120,
     freshnessBoost: 120,
   });
-  assert.equal(rankRootSearchCandidates([dmg, app])[0].command.id, 'app-supercmd');
+  assert.equal(rankRootSearchCandidates([dmg, app])[0].command.id, 'app-discov');
 });
 
 test('URL open command is inserted first outside normal scoring', () => {
@@ -393,7 +393,7 @@ test('file and folder matches stay in the Files section, never the top Results',
 });
 
 test('focused project path file match stays in Files, not the top Results', () => {
-  const query = 'supercmd node';
+  const query = 'discov node';
   const nodeModules = candidate({
     query,
     id: 'folder-node-modules',
@@ -401,9 +401,9 @@ test('focused project path file match stays in Files, not the top Results', () =
     subtype: 'folder',
     fields: [
       { value: 'node_modules', kind: 'label' },
-      { value: '/Users/me/Desktop/Forks/SuperCmd/node_modules', kind: 'path', weight: 0.72 },
+      { value: '/Users/me/Desktop/Forks/Discov/node_modules', kind: 'path', weight: 0.72 },
     ],
-    pathOrUrl: '/Users/me/Desktop/Forks/SuperCmd/node_modules',
+    pathOrUrl: '/Users/me/Desktop/Forks/Discov/node_modules',
     pathLocationBoost: 84,
     noisePenalty: 70,
     depthPenalty: 50,
@@ -413,7 +413,7 @@ test('focused project path file match stays in Files, not the top Results', () =
     searchQuery: query,
     rootRankedCandidates: ranked,
     fileCandidates: ranked.filter((item) => item.source === 'file'),
-    webSearchRootDirectCommand: command('web-search-root-direct', 'Search "supercmd node"'),
+    webSearchRootDirectCommand: command('web-search-root-direct', 'Search "discov node"'),
   });
   assert.deepEqual(ids(assembled.queryResultCommands), ['web-search-root-direct']);
   assert.equal(assembled.queryFileSectionCommands.some((item) => item.id === 'folder-node-modules'), true);
@@ -428,9 +428,9 @@ test('broad location path match does not promote before direct search', () => {
     subtype: 'folder',
     fields: [
       { value: 'node_modules', kind: 'label' },
-      { value: '/Users/me/Desktop/Forks/SuperCmd/node_modules', kind: 'path', weight: 0.72 },
+      { value: '/Users/me/Desktop/Forks/Discov/node_modules', kind: 'path', weight: 0.72 },
     ],
-    pathOrUrl: '/Users/me/Desktop/Forks/SuperCmd/node_modules',
+    pathOrUrl: '/Users/me/Desktop/Forks/Discov/node_modules',
     pathLocationBoost: 84,
     noisePenalty: 70,
     depthPenalty: 50,
@@ -643,9 +643,9 @@ test('command beats a prefix-matching file when query is a later word of the com
   const onboardingCommand = candidate({
     query,
     id: 'system-onboarding',
-    title: 'SuperCmd Onboarding',
+    title: 'Discov Onboarding',
     subtype: 'system-command',
-    fields: [{ value: 'SuperCmd Onboarding', kind: 'label' }],
+    fields: [{ value: 'Discov Onboarding', kind: 'label' }],
   });
   const onboardingFile = candidate({
     query,

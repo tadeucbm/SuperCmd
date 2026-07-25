@@ -61,7 +61,7 @@ export interface CommandInfo {
     title?: string;
     data?: Array<{ title?: string; value?: string }>;
   }>;
-  /** SuperCmd deeplink (e.g. `supercmd://extensions/<owner>/<ext>/<cmd>`). Set for extension and script commands. */
+  /** Discov deeplink (e.g. `discov://extensions/<owner>/<ext>/<cmd>`). Set for extension and script commands. */
   deeplink?: string;
 }
 
@@ -958,7 +958,7 @@ export interface ElectronAPI {
   getAllCommands: () => Promise<CommandInfo[]>;
   updateGlobalShortcut: (shortcut: string) => Promise<boolean>;
   setOpenAtLogin: (enabled: boolean) => Promise<boolean>;
-  replaceSpotlightWithSuperCmdShortcut: () => Promise<boolean>;
+  replaceSpotlightWithDiscovShortcut: () => Promise<boolean>;
   checkOnboardingPermissions: () => Promise<Record<string, boolean>>;
   enableFnWatcherForOnboarding: () => Promise<void>;
   disableFnWatcherForOnboarding: () => Promise<void>;

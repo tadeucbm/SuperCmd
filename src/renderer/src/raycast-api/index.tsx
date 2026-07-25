@@ -2,7 +2,7 @@
  * @raycast/api + @raycast/utils — Complete Compatibility Shim
  *
  * This module provides a comprehensive compatibility layer for Raycast
- * extensions running inside SuperCmd. It implements ALL the APIs
+ * extensions running inside Discov. It implements ALL the APIs
  * documented at https://developers.raycast.com/api-reference/
  *
  * EXPORTS (from @raycast/api):
@@ -154,7 +154,7 @@ let _extensionContext: ExtensionContextType = {
   extensionIconDataUrl: '',
   commandName: '',
   assetsPath: '',
-  supportPath: '/tmp/supercmd',
+  supportPath: '/tmp/discov',
   owner: '',
   preferences: {},
   preferenceDefinitions: [],
@@ -360,7 +360,7 @@ export const environment: Record<string, any> = {
   commandName: '',
   commandMode: 'view',
   assetsPath: '',
-  supportPath: '/tmp/supercmd',
+  supportPath: '/tmp/discov',
   raycastVersion: '1.80.0',
   ownerOrAuthorName: '',
   launchType: LaunchType.UserInitiated,
@@ -1000,7 +1000,7 @@ export function clearSearchBar(options?: { forceScrollToTop?: boolean }): Promis
   _clearSearchBarCallback?.();
   try {
     const candidates = Array.from(
-      document.querySelectorAll<HTMLInputElement>('input[data-supercmd-search-input="true"]')
+      document.querySelectorAll<HTMLInputElement>('input[data-discov-search-input="true"]')
     );
     const visible = candidates.find((input) => {
       if (!input || input.disabled) return false;
@@ -1178,7 +1178,7 @@ export const Clipboard = {
         if (inferredFile) file = inferredFile;
       }
 
-      // Prefer main-process paste flow: hides SuperCmd first and pastes into
+      // Prefer main-process paste flow: hides Discov first and pastes into
       // the previously focused app/editor. This prevents pasting into the
       // launcher's own search field.
       if (file && electron?.pasteFile) {
@@ -1939,7 +1939,7 @@ export const AI = {
 };
 
 if (typeof window !== 'undefined') {
-  (window as any).__supercmdRaycastAI = AI;
+  (window as any).__discovRaycastAI = AI;
 }
 
 // =====================================================================
@@ -2022,7 +2022,7 @@ export async function open(target: string, application?: string | Application): 
   }
 
   // Intercept raycast://confetti deeplinks (used by the 1-click-confetti extension)
-  // and map them to SuperCmd's native confetti overlay.
+  // and map them to Discov's native confetti overlay.
   if (typeof target === 'string') {
     const normalized = target.trim().toLowerCase();
     if (
@@ -2188,7 +2188,7 @@ export async function getFrontmostApplication(): Promise<Application> {
   } catch (e) {
     console.error('getFrontmostApplication error:', e);
   }
-  return { name: 'SuperCmd', path: '', bundleId: 'com.supercmd' };
+  return { name: 'Discov', path: '', bundleId: 'com.discov' };
 }
 
 export async function getDefaultApplication(path: string): Promise<Application> {

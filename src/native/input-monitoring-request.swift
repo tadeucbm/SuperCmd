@@ -6,7 +6,7 @@ import CoreGraphics
 // Attempts to create a CGEventTap at the HID level.
 // - Success: enables it briefly, then exits 0.
 // - Failure: keeps the process alive for 3.5 s so macOS TCC has time to
-//   register SuperCmd in System Settings → Privacy → Input Monitoring,
+//   register Discov in System Settings → Privacy → Input Monitoring,
 //   then exits 0.
 // - Check mode (--check): returns granted=true/false without the wait.
 //
@@ -82,7 +82,7 @@ if let tap = tap {
     }
     // Permission not yet granted.
     // Stay alive so macOS TCC can enqueue the permission request and
-    // surface SuperCmd in the Input Monitoring list.
+    // surface Discov in the Input Monitoring list.
     Thread.sleep(forTimeInterval: 3.5)
 }
 

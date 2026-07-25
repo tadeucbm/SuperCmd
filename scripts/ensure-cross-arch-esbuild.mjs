@@ -5,7 +5,7 @@
  *
  * Why:
  *   esbuild ships its native binary via `optionalDependencies` that resolve
- *   based on the *current* host platform. When SuperCmd is built on Apple
+ *   based on the *current* host platform. When Discov is built on Apple
  *   Silicon, only `@esbuild/darwin-arm64` ends up in node_modules; the same
  *   node_modules is then packed into both the x64 and arm64 DMGs by
  *   electron-builder, so the x64 DMG ships an unusable arm64 binary and every

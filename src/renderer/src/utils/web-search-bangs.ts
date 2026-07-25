@@ -2,7 +2,7 @@ import type {
   WebSearchBangUsageSetting,
 } from '../../types/electron';
 
-export const WEB_SEARCH_BANG_USE_COUNTS_KEY = 'supercmd:webSearchBangUseCounts';
+export const WEB_SEARCH_BANG_USE_COUNTS_KEY = 'discov:webSearchBangUseCounts';
 export const WEB_SEARCH_SUGGEST_DEBOUNCE_MS = 80;
 export const WEB_SEARCH_ACTIVE_BANG_SUGGESTION_LIMIT = 24;
 export const WEB_SEARCH_RECENT_BANG_LIMIT = 20;

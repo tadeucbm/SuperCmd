@@ -1,5 +1,5 @@
 /**
- * Builds the Excalidraw bundle for SuperCmd Canvas.
+ * Builds the Excalidraw bundle for Discov Canvas.
  *
  * React/ReactDOM are externalized — the host renderer MUST set
  * window.React and window.ReactDOM before this script loads.

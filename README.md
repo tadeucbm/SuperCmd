@@ -1,37 +1,32 @@
 <div align="center">
 <p align="center">
-  <img src="./supercmd.svg" width="96" height="96" alt="SuperCmd logo">
+  <img src="./discov.svg" width="96" height="96" alt="Discov logo">
 </p>
 
-<h1 align="center"><b>SuperCmd</b></h1>
+<h1 align="center"><b>Discov</b></h1>
 <h4 align="center">Raycast + Wispr Flow + Speechify + Memory + AI</h4>
 
 <p align="center">
-  <a href="https://supercmd.sh"><img src="https://img.shields.io/badge/website-supercmd.sh-black.svg" alt="Website"></a>
   <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/electron-40-blue.svg" alt="Electron"></a>
-  <a href="https://discord.gg/CsdbknHqx5"><img src="https://img.shields.io/badge/Discord-Join%20chat-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
-  <a href="https://buymeacoffee.com/shobhit99"><img src="https://img.shields.io/badge/Sponsor-Buy%20Me%20a%20Coffee-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 </p>
 
 <p align="center">Open-source launcher for macOS with Raycast-compatible extensions, voice workflows, and AI-native actions.</p>
 </div>
 
-![SuperCmd Screenshot](./assets/supercmd.png)
+![Discov Screenshot](./assets/discov.png)
 
 Open-source launcher for macOS: **Raycast + Wispr Flow + Speechify + Memory + AI** in one app.
 
-SuperCmd gives you Raycast-style extension workflows, hold-to-speak dictation, natural text-to-speech, AI actions backed by configurable providers and memory, notes, canvas, clipboard history, snippet expansion, and window tiling — all from a single keyboard shortcut.
+Discov gives you Raycast-style extension workflows, hold-to-speak dictation, natural text-to-speech, AI actions backed by configurable providers and memory, notes, canvas, clipboard history, snippet expansion, and window tiling — all from a single keyboard shortcut.
 
-<p align="center">
-  <a href="https://buymeacoffee.com/shobhit99"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" height="48"></a>
-  &nbsp;&nbsp;
-  <a href="https://cal.com/shobhit10"><img src="./assets/hire-me-button.svg" alt="Hire Me" height="45"></a>
-</p>
+> **Discov is a fork of [SuperCmd](https://github.com/SuperCmdLabs/SuperCmd)** by
+> [Shobhit Bhosure](https://github.com/shobhit99), used under the MIT License.
+> It is an independent project and is not affiliated with or endorsed by SuperCmd.
 
 ## What It Is
 
-SuperCmd is an Electron + React launcher that focuses on Raycast extension compatibility while remaining community-driven and open source. It ships a full `@raycast/api` and `@raycast/utils` compatibility shim so existing Raycast extensions work without modification. For anything that requires tight system integration — hotkeys, window management, speech recognition, clipboard, snippet injection — it drops into Swift and Objective-C to talk directly to macOS frameworks (ApplicationServices, EventKit, AVFoundation, Carbon) for native speed and reliability.
+Discov is an Electron + React launcher that focuses on Raycast extension compatibility while remaining community-driven and open source. It ships a full `@raycast/api` and `@raycast/utils` compatibility shim so existing Raycast extensions work without modification. For anything that requires tight system integration — hotkeys, window management, speech recognition, clipboard, snippet injection — it drops into Swift and Objective-C to talk directly to macOS frameworks (ApplicationServices, EventKit, AVFoundation, Carbon) for native speed and reliability.
 
 ## Key Features
 
@@ -111,26 +106,26 @@ dist/            Build output
 
 ## Install
 
-### Homebrew
+Discov is currently built from source and installed locally — there is no
+signed release, Homebrew tap, or notarized `.dmg` yet.
 
 ```bash
-brew install --cask supercmdlabs/supercmd/supercmd
+npm install
+npm run reinstall
 ```
 
-### Download the app
+`npm run reinstall` builds for your Mac's architecture, packages the app
+unsigned, ad-hoc signs it so macOS will launch it, and installs it to
+`/Applications/Discov.app`. See [Development Setup](#development-setup) for the
+full toolchain requirements.
 
-Download the latest `.dmg` from the [Releases page](https://github.com/SuperCmdLabs/SuperCmd/releases/latest):
-
-- **Apple Silicon (M1/M2/M3/M4):** `SuperCmd-x.x.x-arm64.dmg`
-- **Intel Mac:** `SuperCmd-x.x.x.dmg`
-
-Open the `.dmg`, drag SuperCmd to your Applications folder, and launch it.
-
-> **Note:** On first launch, macOS may warn that the app is from an unidentified developer. Go to System Settings → Privacy & Security and click "Open Anyway".
+> **Note:** because the build is unsigned, macOS may warn that the app is from an
+> unidentified developer. Go to System Settings → Privacy & Security and click
+> "Open Anyway".
 
 ### macOS Permissions
 
-SuperCmd needs the following permissions. The app will prompt you on first use, or you can enable them manually in **System Settings → Privacy & Security**:
+Discov needs the following permissions. The app will prompt you on first use, or you can enable them manually in **System Settings → Privacy & Security**:
 
 | Permission | Why | Required for |
 |---|---|---|
@@ -144,14 +139,17 @@ SuperCmd needs the following permissions. The app will prompt you on first use, 
 
 ### Auto-updates
 
-SuperCmd includes a built-in auto-updater backed by GitHub Releases. You can check for updates manually by searching "Check for Updates" in the launcher, or install a downloaded update on next launch.
+Discov inherits a built-in auto-updater backed by GitHub Releases. It is
+currently inert: `build.publish` points at `tadeucbm/Discov`, which has no
+published releases, so update checks simply find nothing. Rebuild and reinstall
+with `npm run reinstall` to update.
 
 ### Raycast Backup Import
 
-SuperCmd can import encrypted Raycast `.rayconfig` backups from the General settings tab.
+Discov can import encrypted Raycast `.rayconfig` backups from the General settings tab.
 
 It currently imports:
-- Raycast settings that map cleanly to SuperCmd
+- Raycast settings that map cleanly to Discov
 - the global launcher hotkey
 - command hotkeys
 - quicklinks
@@ -202,8 +200,8 @@ If you don't have Homebrew:
 
 ### 2. Clone and install
 ```bash
-git clone https://github.com/SuperCmdLabs/SuperCmd.git
-cd SuperCmd
+git clone https://github.com/tadeucbm/Discov.git
+cd Discov
 npm install
 ```
 
@@ -235,7 +233,9 @@ Runs `build:main` + `build:renderer` + `build:native` in sequence.
 npm run package
 ```
 
-Output artifacts are generated under `out/`.
+Output artifacts are generated under `out/`. Packaging is unsigned and not
+notarized — code signing and notarization are disabled in `package.json`
+(`mac.identity: null`, `mac.notarize: false`).
 
 ### Useful Commands
 
@@ -245,9 +245,8 @@ npm run build            # Build main, renderer, and native modules
 npm run build:main       # Compile Electron main process TypeScript
 npm run build:renderer   # Build renderer with Vite
 npm run build:native     # Compile Swift helpers and native modules
-npm run package          # Build and package app with electron-builder
-npm run package:unsigned # Build unsigned package for local testing
-npm run reinstall        # Replace /Applications/SuperCmd.app with a fresh local build
+npm run package          # Build and package app with electron-builder (unsigned)
+npm run reinstall        # Replace /Applications/Discov.app with a fresh local build
 npm run check:i18n       # Check internationalization strings
 ```
 
@@ -264,7 +263,7 @@ User data is preserved unless `--wipe-data` is passed; see
 | `npm install` fails on native modules | Ensure Xcode CLT is installed and up to date: `softwareupdate --install -a` |
 | App launches but hotkeys don't work | Grant **Input Monitoring** permission (not just Accessibility) and restart the app |
 | Window management doesn't work | Grant **Accessibility** permission — `window-adjust.swift` checks `AXIsProcessTrusted()` |
-| Extensions fail to install | Verify Homebrew is installed (`brew --version`) — SuperCmd needs brew-resolved `git` to clone extensions |
+| Extensions fail to install | Verify Homebrew is installed (`brew --version`) — Discov needs brew-resolved `git` to clone extensions |
 | `node-gyp` build errors | Check Node.js version (`node -v`) — requires 22+. Try deleting `node_modules` and re-running `npm install` |
 | `Electron failed to install correctly` | Electron's own zip extraction stalls silently on newer Node (seen on 26.x). `npm install` repairs it automatically; run `npm run ensure:electron-binary` if it persists |
 | Apple Silicon (M1/M2/M3) issues | Ensure you're running the arm64 version of Node.js, not the x64 version via Rosetta |
@@ -276,7 +275,7 @@ User data is preserved unless `--wipe-data` is passed; see
 
 Configure everything from the app UI:
 
-1. Launch SuperCmd.
+1. Launch Discov.
 2. Open **Settings** (search "Settings" or use the gear icon).
 3. Go to the **AI** tab.
 4. Enable AI (`enabled = true`).
@@ -315,7 +314,7 @@ Configure everything from the app UI:
 
 All app settings are persisted in:
 
-`~/Library/Application Support/SuperCmd/settings.json`
+`~/Library/Application Support/Discov/settings.json`
 
 Key fields:
 
@@ -343,7 +342,7 @@ Key fields:
 }
 ```
 
-OAuth tokens are stored separately in `~/Library/Application Support/SuperCmd/oauth-tokens.json`.
+OAuth tokens are stored separately in `~/Library/Application Support/Discov/oauth-tokens.json`.
 
 ### Optional environment variable fallbacks
 
@@ -355,9 +354,9 @@ OAuth tokens are stored separately in `~/Library/Application Support/SuperCmd/oa
 
 ## Privacy & Security
 
-SuperCmd is open-source, so you can audit exactly what it does. The short version:
+Discov is open-source, so you can audit exactly what it does. The short version:
 
-- **Telemetry**: one anonymous `app_started` event via [Aptabase](https://aptabase.com/).
+- **Telemetry**: none. Discov sends no analytics events.
 - **AI prompts**: sent directly from your device to your configured provider (OpenAI / Anthropic / Gemini / Ollama).
 - **Extension install/uninstall**: reports extension name + an anonymous random machine ID to `api.supercmd.sh` for download counts.
 - **Voice data**: STT runs fully on-device (Whisper, Parakeet, native macOS) — audio never leaves your machine.
@@ -382,10 +381,15 @@ Quick version:
 
 ## Contributors
 
-Thanks to everyone who has contributed to SuperCmd!
+Discov builds on the work of everyone who contributed to upstream SuperCmd:
 
 <p><a href="https://github.com/shobhit99"><img src="https://avatars.githubusercontent.com/u/38807205?v=4" width="48" height="48" alt="shobhit99" title="shobhit99" style="border-radius:50%"></a> <a href="https://github.com/monotykamary"><img src="https://avatars.githubusercontent.com/u/1130103?v=4" width="48" height="48" alt="monotykamary" title="monotykamary" style="border-radius:50%"></a> <a href="https://github.com/elicep01"><img src="https://avatars.githubusercontent.com/u/184329244?v=4" width="48" height="48" alt="elicep01" title="elicep01" style="border-radius:50%"></a> <a href="https://github.com/tuanddd"><img src="https://avatars.githubusercontent.com/u/25856620?v=4" width="48" height="48" alt="tuanddd" title="tuanddd" style="border-radius:50%"></a> <a href="https://github.com/stephaneRR"><img src="https://avatars.githubusercontent.com/u/120036021?v=4" width="48" height="48" alt="stephaneRR" title="stephaneRR" style="border-radius:50%"></a> <a href="https://github.com/ericmason"><img src="https://avatars.githubusercontent.com/u/17150?v=4" width="48" height="48" alt="ericmason" title="ericmason" style="border-radius:50%"></a> <a href="https://github.com/pablopunk"><img src="https://avatars.githubusercontent.com/u/4324982?v=4" width="48" height="48" alt="pablopunk" title="pablopunk" style="border-radius:50%"></a> <a href="https://github.com/Hantok"><img src="https://avatars.githubusercontent.com/u/1752322?v=4" width="48" height="48" alt="Hantok" title="Hantok" style="border-radius:50%"></a> <a href="https://github.com/dardevelin"><img src="https://avatars.githubusercontent.com/u/1424739?v=4" width="48" height="48" alt="dardevelin" title="dardevelin" style="border-radius:50%"></a></p>
 
 ## GitHub Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=SuperCmdLabs/SuperCmd&type=Date)](https://star-history.com/#SuperCmdLabs/SuperCmd&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=tadeucbm/Discov&type=Date)](https://star-history.com/#tadeucbm/Discov&Date)
+
+## License
+
+[MIT](./LICENSE) — © 2026 Shobhit Bhosure (original SuperCmd work) and
+© 2026 Tadeu Castelo Branco Madureira (Discov modifications).

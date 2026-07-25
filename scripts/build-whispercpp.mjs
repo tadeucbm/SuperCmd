@@ -35,7 +35,7 @@ function run(command, args, options = {}) {
 }
 
 function prepareFramework() {
-  const tempRoot = mkdtempSync(path.join(tmpdir(), 'supercmd-whispercpp-'));
+  const tempRoot = mkdtempSync(path.join(tmpdir(), 'discov-whispercpp-'));
   const archivePath = path.join(tempRoot, 'whisper-xcframework.zip');
   const extractDir = path.join(tempRoot, 'extract');
 
@@ -80,7 +80,7 @@ function prepareFramework() {
 }
 
 function buildTranscriber() {
-  const moduleCacheDir = path.join(tmpdir(), 'supercmd-swift-module-cache');
+  const moduleCacheDir = path.join(tmpdir(), 'discov-swift-module-cache');
   mkdirSync(moduleCacheDir, { recursive: true });
 
   console.log('[whisper.cpp] Building whisper-transcriber');

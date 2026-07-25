@@ -7,7 +7,7 @@ on:
       - 'canvas-app/**'
     branches:
       - main
-      - supercmd-canvas
+      - discov-canvas
 
 env:
   S3_BUCKET: ${{ secrets.S3_EXTENSIONS_BUCKET }}

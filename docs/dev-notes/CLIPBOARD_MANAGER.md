@@ -1,6 +1,6 @@
 # Clipboard Manager
 
-A Raycast-inspired clipboard history manager built into SuperCmd.
+A Raycast-inspired clipboard history manager built into Discov.
 
 ## Features
 
@@ -19,7 +19,7 @@ A Raycast-inspired clipboard history manager built into SuperCmd.
 ## Usage
 
 1. **Open Clipboard Manager**:
-   - Open SuperCmd launcher (default: `Cmd+Space`)
+   - Open Discov launcher (default: `Cmd+Space`)
    - Type "Clipboard History" or just "clip"
    - Press Enter
 
@@ -53,8 +53,8 @@ A Raycast-inspired clipboard history manager built into SuperCmd.
 
 ### Storage
 
-- History metadata: `~/Library/Application Support/SuperCmd/clipboard-history/history.json`
-- Image files: `~/Library/Application Support/SuperCmd/clipboard-history/images/`
+- History metadata: `~/Library/Application Support/Discov/clipboard-history/history.json`
+- Image files: `~/Library/Application Support/Discov/clipboard-history/images/`
 - Maximum items: 1000 (older items are automatically removed)
 - Maximum image size: 10MB per image
 - Maximum text length: 100,000 characters

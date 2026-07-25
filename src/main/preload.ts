@@ -316,8 +316,8 @@ const electronAPI = {
     ipcRenderer.invoke('update-global-shortcut', shortcut),
   setOpenAtLogin: (enabled: boolean): Promise<boolean> =>
     ipcRenderer.invoke('set-open-at-login', enabled),
-  replaceSpotlightWithSuperCmdShortcut: (): Promise<boolean> =>
-    ipcRenderer.invoke('replace-spotlight-with-supercmd'),
+  replaceSpotlightWithDiscovShortcut: (): Promise<boolean> =>
+    ipcRenderer.invoke('replace-spotlight-with-discov'),
   checkOnboardingPermissions: (): Promise<Record<string, boolean>> =>
     ipcRenderer.invoke('check-onboarding-permissions'),
   enableFnWatcherForOnboarding: (): Promise<void> =>

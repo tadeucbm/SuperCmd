@@ -6,7 +6,7 @@
 
 import type { ElevenLabsVoice } from '../../types/electron';
 
-const CACHE_KEY = 'supercmd-elevenlabs-voices-cache';
+const CACHE_KEY = 'discov-elevenlabs-voices-cache';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 interface CacheEntry {

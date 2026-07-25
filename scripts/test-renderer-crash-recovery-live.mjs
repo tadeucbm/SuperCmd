@@ -8,7 +8,7 @@
 //
 // It's heavier than the pure-logic tests, so it self-skips when Electron can't
 // be launched (e.g. a headless CI box with no display, or
-// SUPERCMD_SKIP_ELECTRON_TESTS=1).
+// DISCOV_SKIP_ELECTRON_TESTS=1).
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -32,7 +32,7 @@ function resolveElectronBinary() {
 }
 
 const electronBin = resolveElectronBinary();
-const shouldSkip = !electronBin || process.env.SUPERCMD_SKIP_ELECTRON_TESTS === '1'
+const shouldSkip = !electronBin || process.env.DISCOV_SKIP_ELECTRON_TESTS === '1'
   || (process.platform === 'linux' && !process.env.DISPLAY);
 
 function runHarness() {

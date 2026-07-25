@@ -4,7 +4,7 @@
  * Wraps Electron's `safeStorage` API to persist secrets encrypted on disk
  * (macOS Keychain on Mac, DPAPI on Windows, libsecret/kwallet on Linux).
  *
- * On disk format (~/Library/Application Support/SuperCmd/safe-storage.json):
+ * On disk format (~/Library/Application Support/Discov/safe-storage.json):
  *   { "<key>": "enc:<base64-encrypted>" }
  *
  * If the OS keyring is not available we degrade gracefully and persist

@@ -142,7 +142,7 @@ export function useLauncherLocalSystemCommands(
     }
     setBrowserResultsViewQuery(null);
     setWebSearchQuery(null);
-    if (commandId === 'system-supercmd-whisper' || commandId === 'system-supercmd-speak') {
+    if (commandId === 'system-discov-whisper' || commandId === 'system-discov-speak') {
       try {
         const settings = await window.electron.getSettings();
         if (settings.ai?.enabled === false) {
@@ -329,7 +329,7 @@ export function useLauncherLocalSystemCommands(
       await window.electron.executeCommand(commandId);
       return true;
     }
-    if (commandId === 'system-supercmd-whisper') {
+    if (commandId === 'system-discov-whisper') {
       whisperSessionRef.current = true;
       if (showOnboarding) {
         setShowWhisper(true);
@@ -340,7 +340,7 @@ export function useLauncherLocalSystemCommands(
       openWhisper();
       return true;
     }
-    if (commandId === 'system-supercmd-speak') {
+    if (commandId === 'system-discov-speak') {
       whisperSessionRef.current = false;
       if (showOnboarding) {
         setShowSpeak(true);
@@ -349,7 +349,7 @@ export function useLauncherLocalSystemCommands(
       openSpeak();
       return true;
     }
-    if (commandId === 'system-supercmd-speak-close') {
+    if (commandId === 'system-discov-speak-close') {
       setShowSpeak(false);
       return true;
     }

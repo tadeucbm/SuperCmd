@@ -2,7 +2,7 @@
  * Extension View
  *
  * Dynamically loads and renders a community extension's UI
- * inside the SuperCmd overlay.
+ * inside the Discov overlay.
  *
  * The extension code (built to CJS by esbuild) is executed with a
  * custom `require()` that provides React and our @raycast/api shim.
@@ -142,7 +142,7 @@ class ExtensionErrorBoundary extends React.Component<
 
 // ─── Node.js built-in stubs ─────────────────────────────────────────
 // Raycast extensions run in a full Node.js environment inside Raycast.
-// In SuperCmd, extensions run in the renderer (browser context).
+// In Discov, extensions run in the renderer (browser context).
 // We provide comprehensive stubs so that bundled code that calls
 // require('os'), require('buffer'), etc. doesn't crash on import.
 //
@@ -2633,7 +2633,7 @@ const processStub: Record<string, any> = {
   execPath: '/usr/local/bin/node',
   pid: 1,
   ppid: 0,
-  title: 'SuperCmd',
+  title: 'Discov',
   exit: noop,
   abort: noop,
   kill: noop,
@@ -3038,7 +3038,7 @@ const nodeBuiltinStubs: Record<string, any> = {
       const appendParams = (url: string, params?: any) => {
         if (!params || typeof params !== 'object') return url;
         try {
-          const baseOrigin = typeof window !== 'undefined' && window.location ? window.location.origin : 'https://local.supercmd';
+          const baseOrigin = typeof window !== 'undefined' && window.location ? window.location.origin : 'https://local.discov';
           const parsed = new URL(url, baseOrigin);
           for (const [key, rawValue] of Object.entries(params)) {
             if (rawValue == null) continue;
@@ -3330,15 +3330,15 @@ function isNodeBuiltinRequest(name: string): boolean {
   return false;
 }
 
-function shouldUseSuperCmdBuiltinFacade(name: string): boolean {
+function shouldUseDiscovBuiltinFacade(name: string): boolean {
   const normalized = name.startsWith('node:') ? name.slice(5) : name;
   return normalized === 'fs' || normalized === 'fs/promises' || normalized === 'child_process';
 }
 
-const superCmdBuiltinFacadeCache = new Map<string, any>();
+const discovBuiltinFacadeCache = new Map<string, any>();
 
-function getSuperCmdBuiltinFacade(name: string): any | undefined {
-  if (!shouldUseSuperCmdBuiltinFacade(name)) return undefined;
+function getDiscovBuiltinFacade(name: string): any | undefined {
+  if (!shouldUseDiscovBuiltinFacade(name)) return undefined;
   const normalized = name.startsWith('node:') ? name.slice(5) : name;
   const facade = nodeBuiltinStubs[normalized] || nodeBuiltinStubs[name] || nodeBuiltinStubs[`node:${normalized}`];
   if (!facade) return undefined;
@@ -3347,7 +3347,7 @@ function getSuperCmdBuiltinFacade(name: string): any | undefined {
   if (!realModule || typeof realModule !== 'object') return facade;
 
   const cacheKey = normalized;
-  const cached = superCmdBuiltinFacadeCache.get(cacheKey);
+  const cached = discovBuiltinFacadeCache.get(cacheKey);
   if (cached?.realModule === realModule && cached?.facade === facade) {
     return cached.proxy;
   }
@@ -3384,7 +3384,7 @@ function getSuperCmdBuiltinFacade(name: string): any | undefined {
       return realDescriptor ? { ...realDescriptor, configurable: true } : undefined;
     },
   });
-  superCmdBuiltinFacadeCache.set(cacheKey, { facade, realModule, proxy });
+  discovBuiltinFacadeCache.set(cacheKey, { facade, realModule, proxy });
   return proxy;
 }
 
@@ -3597,11 +3597,11 @@ function ensureGlobals() {
 
   // fetch bridge — route extension HTTP(S) through main process to avoid CORS.
   // Keep native fetch for non-HTTP URLs and unsupported body types.
-  if (!g.__SUPERCMD_NATIVE_FETCH && typeof g.fetch === 'function') {
-    g.__SUPERCMD_NATIVE_FETCH = g.fetch.bind(g);
+  if (!g.__DISCOV_NATIVE_FETCH && typeof g.fetch === 'function') {
+    g.__DISCOV_NATIVE_FETCH = g.fetch.bind(g);
   }
-  if (!g.__SUPERCMD_FETCH_PATCHED) {
-    const nativeFetch = g.__SUPERCMD_NATIVE_FETCH;
+  if (!g.__DISCOV_FETCH_PATCHED) {
+    const nativeFetch = g.__DISCOV_NATIVE_FETCH;
     const isHttpUrl = (value: string) => /^https?:\/\//i.test(value);
     const toHeadersObject = (headersLike: any): Record<string, string> => {
       const out: Record<string, string> = {};
@@ -3709,7 +3709,7 @@ function ensureGlobals() {
       return response;
     };
 
-    g.__SUPERCMD_FETCH_PATCHED = true;
+    g.__DISCOV_FETCH_PATCHED = true;
   }
 }
 
@@ -3957,7 +3957,7 @@ function loadExtensionExport(
 
     // Custom require that provides our shim modules.
     // This is the critical bridge between extension code and the
-    // SuperCmd renderer environment. Every module an extension
+    // Discov renderer environment. Every module an extension
     // might `require()` must be handled here.
     //
     // IMPORTANT: We track React requires to verify the same instance is always returned.
@@ -3979,7 +3979,7 @@ function loadExtensionExport(
         case 'react': {
           // Return React directly - the exact same module the host uses
           console.log('[fakeRequire] Providing React directly');
-          (globalThis as any).__SUPERCMD_REACT = React;
+          (globalThis as any).__DISCOV_REACT = React;
           return React;
         }
         case 'react-dom':
@@ -4099,8 +4099,8 @@ function loadExtensionExport(
       // Prefer real Node (via the preload bridge) when the hosting window
       // has Node enabled. Falls back to the stub if the module isn't a
       // recognised built-in, or if real require throws.
-      if (shouldUseSuperCmdBuiltinFacade(name)) {
-        const facade = getSuperCmdBuiltinFacade(name);
+      if (shouldUseDiscovBuiltinFacade(name)) {
+        const facade = getDiscovBuiltinFacade(name);
         if (facade) return facade;
       }
       const realModule = tryRealNodeRequire(name);
@@ -4323,7 +4323,7 @@ function loadExtensionExport(
       code,
       executableCode,
     });
-    if ((globalThis as any).__SUPERCMD_DEBUG_EXTENSION_WRAPPER_CACHE) {
+    if ((globalThis as any).__DISCOV_DEBUG_EXTENSION_WRAPPER_CACHE) {
       console.debug(`[loadExtensionExport] Wrapper cache ${cacheHit ? 'hit' : 'miss'} for ${extensionIdentity}`);
     }
 
@@ -4540,7 +4540,7 @@ const ExtensionView: React.FC<ExtensionViewProps> = ({
   extensionIconDataUrl = '',
   commandName = '',
   assetsPath = '',
-  supportPath = '/tmp/supercmd',
+  supportPath = '/tmp/discov',
   extensionPath = '',
   owner = '',
   preferences = {},
@@ -4675,7 +4675,7 @@ const ExtensionView: React.FC<ExtensionViewProps> = ({
         const target = e.target as HTMLElement | null;
         const isEmptySearchInput =
           target instanceof HTMLInputElement &&
-          target.dataset.supercmdSearchInput === 'true' &&
+          target.dataset.discovSearchInput === 'true' &&
           target.value === '';
         if (!isEmptySearchInput) return;
         e.preventDefault();

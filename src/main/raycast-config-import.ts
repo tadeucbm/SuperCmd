@@ -359,7 +359,7 @@ function findGzipOffset(buffer: Buffer): number {
 }
 
 function decryptRaycastBuffer(raw: Buffer, password: string): Buffer {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'supercmd-rayconfig-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'discov-rayconfig-'));
   const inputPath = path.join(tempDir, 'backup.rayconfig');
   const outputPath = path.join(tempDir, 'backup.decrypted');
   try {
@@ -567,7 +567,7 @@ function buildImportPreview(data: RaycastBackup): string {
     `Notes: ${notes}`,
     `Extensions: ${extensions}`,
     '',
-    'This import will only bring over categories that SuperCmd can map cleanly today.',
+    'This import will only bring over categories that Discov can map cleanly today.',
     'It will skip clipboard history and MCP server config.',
   ];
   return lines.join('\n');
@@ -1133,19 +1133,19 @@ async function importCommandCustomizations(
   }
 
   if (hotkeyConflictCount > 0) {
-    warnings.push(`Skipped ${hotkeyConflictCount} Raycast command hotkey${hotkeyConflictCount === 1 ? '' : 's'} because SuperCmd already has a different shortcut.`);
+    warnings.push(`Skipped ${hotkeyConflictCount} Raycast command hotkey${hotkeyConflictCount === 1 ? '' : 's'} because Discov already has a different shortcut.`);
   }
   if (hotkeyUnmappedCount > 0) {
-    warnings.push(`Skipped ${hotkeyUnmappedCount} Raycast command hotkey${hotkeyUnmappedCount === 1 ? '' : 's'} that could not be mapped to a SuperCmd command.`);
+    warnings.push(`Skipped ${hotkeyUnmappedCount} Raycast command hotkey${hotkeyUnmappedCount === 1 ? '' : 's'} that could not be mapped to a Discov command.`);
   }
   if (aliasConflictCount > 0) {
-    warnings.push(`Skipped ${aliasConflictCount} Raycast alias candidate${aliasConflictCount === 1 ? '' : 's'} because SuperCmd already has a different alias.`);
+    warnings.push(`Skipped ${aliasConflictCount} Raycast alias candidate${aliasConflictCount === 1 ? '' : 's'} because Discov already has a different alias.`);
   }
   if (aliasUnmappedCount > 0) {
-    warnings.push(`Skipped ${aliasUnmappedCount} Raycast search alias candidate${aliasUnmappedCount === 1 ? '' : 's'} that could not be mapped to a SuperCmd command.`);
+    warnings.push(`Skipped ${aliasUnmappedCount} Raycast search alias candidate${aliasUnmappedCount === 1 ? '' : 's'} that could not be mapped to a Discov command.`);
   }
   if (favoriteUnmappedCount > 0) {
-    warnings.push(`Skipped ${favoriteUnmappedCount} Raycast favorite${favoriteUnmappedCount === 1 ? '' : 's'} that could not be mapped to a SuperCmd command.`);
+    warnings.push(`Skipped ${favoriteUnmappedCount} Raycast favorite${favoriteUnmappedCount === 1 ? '' : 's'} that could not be mapped to a Discov command.`);
   }
 
   return {

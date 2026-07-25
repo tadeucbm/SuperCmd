@@ -6,7 +6,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Settings, Puzzle, Brain, SlidersHorizontal } from 'lucide-react';
-import supercmdLogo from '../../../supercmd.svg';
+import discovLogo from '../../../discov.svg';
 import GeneralTab from './settings/GeneralTab';
 import AITab from './settings/AITab';
 import ExtensionsTab from './settings/ExtensionsTab';
@@ -159,7 +159,7 @@ const SettingsApp: React.FC = () => {
       <div className="px-5 pb-2.5 border-b border-[var(--ui-divider)]">
         <div className="relative flex items-center justify-center">
           <div className="absolute left-0 text-[12px] font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
-            <img src={supercmdLogo} alt="" className="w-3.5 h-3.5 object-contain" draggable={false} />
+            <img src={discovLogo} alt="" className="w-3.5 h-3.5 object-contain" draggable={false} />
             {t('settings.title')}
           </div>
           <div className="inline-flex items-stretch overflow-hidden rounded-md border border-[var(--ui-divider)] bg-[var(--ui-segment-bg)]">

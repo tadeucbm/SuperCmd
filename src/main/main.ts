@@ -1,5 +1,5 @@
 /**
- * Main Process — SuperCmd
+ * Main Process — Discov
  *
  * Handles:
  * - Global shortcut registration (configurable)
@@ -52,7 +52,7 @@ import {
   ensureSampleScriptCommand,
   executeScriptCommand,
   getScriptCommandBySlug,
-  getSuperCmdScriptCommandsDirectory,
+  getDiscovScriptCommandsDirectory,
   invalidateScriptCommandsCache,
 } from './script-command-runner';
 import {
@@ -220,12 +220,10 @@ import {
 } from './raycast-config-import';
 import { runExecCommand, type ExecCommandOptions } from './exec-command';
 
-import { initialize as initAptabase, trackEvent } from "@aptabase/electron/main";
-
 const electron = require('electron');
 const { app, BrowserWindow, globalShortcut, ipcMain, screen, shell, Menu, Tray, nativeImage, protocol, net, dialog, systemPreferences, clipboard: systemClipboard } = electron;
 try {
-  app.setName('SuperCmd');
+  app.setName('Discov');
 } catch {}
 
 // ─── Native Binary Helpers ──────────────────────────────────────────
@@ -576,16 +574,16 @@ async function transcribeAudioWithParakeet(opts: {
 }): Promise<string> {
   const status = getParakeetModelStatus();
   if (status.state === 'downloading') {
-    throw new Error('Parakeet models are still downloading. Finish setup from onboarding or Settings -> AI -> SuperCmd Whisper.');
+    throw new Error('Parakeet models are still downloading. Finish setup from onboarding or Settings -> AI -> Discov Whisper.');
   }
   if (status.state !== 'downloaded') {
-    throw new Error('Parakeet models have not been downloaded yet. Download them from onboarding or Settings -> AI -> SuperCmd Whisper.');
+    throw new Error('Parakeet models have not been downloaded yet. Download them from onboarding or Settings -> AI -> Discov Whisper.');
   }
 
   // Ensure the persistent server process is running (models loaded in memory)
   await ensureParakeetServer();
 
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'supercmd-parakeet-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'discov-parakeet-'));
   const audioPath = path.join(tempDir, 'input.wav');
 
   try {
@@ -838,11 +836,11 @@ async function transcribeAudioWithQwen3(opts: {
 }): Promise<string> {
   const status = getQwen3ModelStatus();
   if (status.state === 'downloading') throw new Error('Qwen3 models are still downloading.');
-  if (status.state !== 'downloaded') throw new Error('Qwen3 models have not been downloaded yet. Download them from Settings -> AI -> SuperCmd Whisper.');
+  if (status.state !== 'downloaded') throw new Error('Qwen3 models have not been downloaded yet. Download them from Settings -> AI -> Discov Whisper.');
 
   await ensureQwen3Server();
 
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'supercmd-qwen3-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'discov-qwen3-'));
   const audioPath = path.join(tempDir, 'input.wav');
 
   try {
@@ -944,7 +942,7 @@ async function downloadFileWithRedirects(
       parsedUrl.toString(),
       {
         headers: {
-          'User-Agent': 'SuperCmd/1.0 whisper.cpp bootstrap',
+          'User-Agent': 'Discov/1.0 whisper.cpp bootstrap',
           'Accept': '*/*',
         },
       },
@@ -1109,7 +1107,7 @@ function ensureWhisperCppTranscriberBinary(): string {
   const runtimeDir = getWhisperCppRuntimeDir();
   if (!fs.existsSync(frameworkPath)) {
     throw new Error(
-      `SuperCmd Whisper runtime is missing. Rebuild native helpers to download the official ${WHISPERCPP_FRAMEWORK_VERSION} macOS framework.`
+      `Discov Whisper runtime is missing. Rebuild native helpers to download the official ${WHISPERCPP_FRAMEWORK_VERSION} macOS framework.`
     );
   }
 
@@ -1120,7 +1118,7 @@ function ensureWhisperCppTranscriberBinary(): string {
   ]);
 
   if (!sourcePath) {
-    throw new Error('SuperCmd Whisper transcriber source is missing. Run npm run build:native to regenerate the binary.');
+    throw new Error('Discov Whisper transcriber source is missing. Run npm run build:native to regenerate the binary.');
   }
 
   fs.mkdirSync(path.dirname(binaryPath), { recursive: true });
@@ -1129,7 +1127,7 @@ function ensureWhisperCppTranscriberBinary(): string {
     const { execFileSync } = require('child_process');
     execFileSync('swiftc', [
       '-O',
-      '-module-cache-path', path.join(os.tmpdir(), 'supercmd-swift-module-cache'),
+      '-module-cache-path', path.join(os.tmpdir(), 'discov-swift-module-cache'),
       '-F', runtimeDir,
       '-framework', 'whisper',
       '-Xlinker', '-rpath',
@@ -1140,7 +1138,7 @@ function ensureWhisperCppTranscriberBinary(): string {
     console.log('[Whisper][whisper.cpp] Compiled whisper-transcriber binary');
   } catch (error) {
     console.error('[Whisper][whisper.cpp] Compile failed:', error);
-    throw new Error('Failed to compile SuperCmd Whisper transcriber. Ensure Xcode Command Line Tools are installed.');
+    throw new Error('Failed to compile Discov Whisper transcriber. Ensure Xcode Command Line Tools are installed.');
   }
 
   return binaryPath;
@@ -1286,21 +1284,21 @@ async function transcribeAudioWithWhisperCpp(opts: {
 }): Promise<string> {
   const mimeType = String(opts.mimeType || 'audio/wav').toLowerCase();
   if (mimeType && !mimeType.includes('wav')) {
-    throw new Error(`SuperCmd Whisper transcription expects WAV audio, received ${mimeType}.`);
+    throw new Error(`Discov Whisper transcription expects WAV audio, received ${mimeType}.`);
   }
 
   const status = getWhisperCppModelStatus();
   if (status.state === 'downloading') {
-    throw new Error('The SuperCmd Whisper model is still downloading. Finish setup from onboarding or Settings -> AI -> SuperCmd Whisper.');
+    throw new Error('The Discov Whisper model is still downloading. Finish setup from onboarding or Settings -> AI -> Discov Whisper.');
   }
   if (status.state !== 'downloaded') {
-    throw new Error('The SuperCmd Whisper model has not been downloaded yet. Download it from onboarding or Settings -> AI -> SuperCmd Whisper.');
+    throw new Error('The Discov Whisper model has not been downloaded yet. Download it from onboarding or Settings -> AI -> Discov Whisper.');
   }
 
   // Ensure the persistent server is running (model loaded in memory)
   await ensureWhisperCppServer();
 
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'supercmd-whispercpp-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'discov-whispercpp-'));
   const audioPath = path.join(tempDir, 'input.wav');
 
   try {
@@ -2165,10 +2163,10 @@ function isSelfManagedWindow(win: NodeWindowInfo | null | undefined): boolean {
     const exePath = app.getPath('exe');
     if (appPath === exePath) return true;
     if (appName && appPath.includes(`${appName}.app`)) return true;
-    if (appPath.includes('SuperCmd.app')) return true;
+    if (appPath.includes('Discov.app')) return true;
   }
   const title = String(win.title || '');
-  if (title.toLowerCase().includes('supercmd')) return true;
+  if (title.toLowerCase().includes('discov')) return true;
   return false;
 }
 
@@ -2303,12 +2301,12 @@ const CURSOR_PROMPT_LEFT_OFFSET = 20;
 const PROMPT_WINDOW_PREWARM_DELAY_MS = 420;
 const WHISPER_WINDOW_WIDTH = 266;
 const WHISPER_WINDOW_HEIGHT = 84;
-const DETACHED_WHISPER_WINDOW_NAME = 'supercmd-whisper-window';
-const DETACHED_WHISPER_ONBOARDING_WINDOW_NAME = 'supercmd-whisper-onboarding-window';
-const DETACHED_SPEAK_WINDOW_NAME = 'supercmd-speak-window';
-const DETACHED_WINDOW_MANAGER_WINDOW_NAME = 'supercmd-window-manager-window';
-const DETACHED_PROMPT_WINDOW_NAME = 'supercmd-prompt-window';
-const DETACHED_MEMORY_STATUS_WINDOW_NAME = 'supercmd-memory-status-window';
+const DETACHED_WHISPER_WINDOW_NAME = 'discov-whisper-window';
+const DETACHED_WHISPER_ONBOARDING_WINDOW_NAME = 'discov-whisper-onboarding-window';
+const DETACHED_SPEAK_WINDOW_NAME = 'discov-speak-window';
+const DETACHED_WINDOW_MANAGER_WINDOW_NAME = 'discov-window-manager-window';
+const DETACHED_PROMPT_WINDOW_NAME = 'discov-prompt-window';
+const DETACHED_MEMORY_STATUS_WINDOW_NAME = 'discov-memory-status-window';
 const DETACHED_WINDOW_QUERY_KEY = 'sc_detached';
 const MEMORY_STATUS_WINDOW_WIDTH = 340;
 const MEMORY_STATUS_WINDOW_HEIGHT = 60;
@@ -3216,7 +3214,7 @@ function moveWindowToCurrentAerospaceWorkspace(): void {
 
     // Find our window(s) by bundle-id
     const windowsRaw = String(
-      execFileSync('aerospace', ['list-windows', '--all', '--app-bundle-id', 'com.supercmd.app', '--format', '%{window-id} %{workspace}'], {
+      execFileSync('aerospace', ['list-windows', '--all', '--app-bundle-id', 'com.discov.app', '--format', '%{window-id} %{workspace}'], {
         timeout: 500,
         stdio: ['ignore', 'pipe', 'ignore'],
       }) || ''
@@ -3299,7 +3297,7 @@ let activeSpeakSession: {
 let launcherMode: LauncherMode = 'default';
 let lastWhisperToggleAt = 0;
 let lastWhisperShownAt = 0;
-const INTERNAL_CLIPBOARD_PROBE_REGEX = /^__supercmd_[a-z0-9_]+_probe__\d+_[a-z0-9]+$/i;
+const INTERNAL_CLIPBOARD_PROBE_REGEX = /^__discov_[a-z0-9_]+_probe__\d+_[a-z0-9]+$/i;
 const WINDOW_MANAGEMENT_PRESET_COMMAND_IDS = new Set<string>([
   'system-window-management-left',
   'system-window-management-right',
@@ -3621,10 +3619,10 @@ async function executeNativeWindowAdjustByAction(
     const hintedAppPath = String(targetHint?.appPath || '').trim();
     const hintedWindowId = Math.trunc(Number(targetHint?.windowId));
     const hintedWorkArea = cloneWorkArea(targetHint?.workArea || null);
-    if (hintedBundleId && hintedBundleId !== 'com.supercmd.app' && hintedBundleId !== 'com.supercmd') {
+    if (hintedBundleId && hintedBundleId !== 'com.discov.app' && hintedBundleId !== 'com.discov') {
       args.push('--bundle-id', hintedBundleId);
     }
-    if (hintedAppPath && !hintedAppPath.includes('/SuperCmd.app')) {
+    if (hintedAppPath && !hintedAppPath.includes('/Discov.app')) {
       args.push('--app-path', hintedAppPath);
     }
     if (Number.isFinite(hintedWindowId) && hintedWindowId > 0) {
@@ -4557,7 +4555,7 @@ type HomeFolderAccessProbeResult = {
 
 function describeMicrophoneStatus(status: MicrophoneAccessStatus): string {
   if (status === 'denied') {
-    return 'Microphone access is denied. Enable SuperCmd in System Settings -> Privacy & Security -> Microphone.';
+    return 'Microphone access is denied. Enable Discov in System Settings -> Privacy & Security -> Microphone.';
   }
   if (status === 'restricted') {
     return 'Microphone access is restricted on this device.';
@@ -4633,7 +4631,7 @@ async function promptForHomeFolderAccess(): Promise<{ requested: boolean; select
     const hostWindow = mainWindow && !mainWindow.isDestroyed() ? mainWindow : undefined;
     const result = await dialog.showOpenDialog(hostWindow, {
       title: 'Allow Home Folder Access',
-      message: 'Select your Home folder to let SuperCmd index files for Search Files.',
+      message: 'Select your Home folder to let Discov index files for Search Files.',
       defaultPath: homeDir,
       buttonLabel: 'Select Home Folder',
       properties: ['openDirectory', 'dontAddToRecent'],
@@ -4750,7 +4748,7 @@ async function ensureMicrophoneAccess(prompt = true): Promise<MicrophonePermissi
     };
   }
 
-  // Request from the Electron app process first so macOS registers SuperCmd
+  // Request from the Electron app process first so macOS registers Discov
   // itself in Privacy & Security -> Microphone.
   let requested = false;
   let electronError = '';
@@ -4958,7 +4956,7 @@ async function requestOnboardingPermissionAccess(target: OnboardingPermissionTar
       canPrompt: true,
       error:
         promptResult.error ||
-        `${deniedMessage}Allow SuperCmd in System Settings -> Privacy & Security -> Files and Folders, then request again.`,
+        `${deniedMessage}Allow Discov in System Settings -> Privacy & Security -> Files and Folders, then request again.`,
     };
   }
 
@@ -5020,7 +5018,7 @@ async function requestOnboardingPermissionAccess(target: OnboardingPermissionTar
   }
 
   // Input Monitoring: first check whether access is already granted.
-  // If not, launch the helper detached so macOS can add SuperCmd to the
+  // If not, launch the helper detached so macOS can add Discov to the
   // Input Monitoring list and the user can manually enable it.
   const alreadyGranted = await checkInputMonitoringAccess();
   if (alreadyGranted) {
@@ -5048,7 +5046,7 @@ async function requestOnboardingPermissionAccess(target: OnboardingPermissionTar
     canPrompt: true,
     error: binaryPath
       ? undefined
-      : 'Could not prepare Input Monitoring helper. Open System Settings -> Privacy & Security -> Input Monitoring and add SuperCmd manually.',
+      : 'Could not prepare Input Monitoring helper. Open System Settings -> Privacy & Security -> Input Monitoring and add Discov manually.',
   };
 }
 let lastTypingCaretPoint: { x: number; y: number } | null = null;
@@ -5060,7 +5058,7 @@ let whisperOverlayVisible = false;
 let speakOverlayVisible = false;
 let whisperChildWindow: InstanceType<typeof BrowserWindow> | null = null;
 let whisperOverlayOpeningGuardUntil = 0;
-let whisperSuperCmdTextTargetWindow: InstanceType<typeof BrowserWindow> | null = null;
+let whisperDiscovTextTargetWindow: InstanceType<typeof BrowserWindow> | null = null;
 const LAUNCHER_SELECTION_SNAPSHOT_TTL_MS = 15_000;
 
 function markWhisperOverlayOpening(): void {
@@ -5071,7 +5069,7 @@ function isWhisperOverlayActiveOrOpening(): boolean {
   return whisperOverlayVisible || Date.now() < whisperOverlayOpeningGuardUntil;
 }
 
-function isWhisperSuperCmdTextTargetWindow(win: InstanceType<typeof BrowserWindow> | null | undefined): boolean {
+function isWhisperDiscovTextTargetWindow(win: InstanceType<typeof BrowserWindow> | null | undefined): boolean {
   if (!win || win.isDestroyed()) return false;
   return win === mainWindow || win === notesWindow || win === canvasWindow;
 }
@@ -5123,10 +5121,10 @@ function buildWhisperTextTargetCaptureScript(): string {
         }
         return { kind: 'contenteditable', element: editable, range };
       };
-      window.__supercmdWhisperTextTarget = capture();
-      window.__supercmdInsertWhisperText = (rawText) => {
+      window.__discovWhisperTextTarget = capture();
+      window.__discovInsertWhisperText = (rawText) => {
         const text = String(rawText || '');
-        const target = window.__supercmdWhisperTextTarget;
+        const target = window.__discovWhisperTextTarget;
         if (!text || !target || !target.element || !target.element.isConnected) return false;
         try { target.element.focus({ preventScroll: true }); } catch (_) { try { target.element.focus(); } catch (_) {} }
         if (target.kind === 'input') {
@@ -5166,35 +5164,35 @@ function buildWhisperTextTargetCaptureScript(): string {
         dispatchInput(target.element, text);
         return true;
       };
-      return Boolean(window.__supercmdWhisperTextTarget);
+      return Boolean(window.__discovWhisperTextTarget);
     })();
   `;
 }
 
-function captureWhisperSuperCmdTextTarget(): void {
+function captureWhisperDiscovTextTarget(): void {
   const focusedWindow = BrowserWindow.getFocusedWindow() as InstanceType<typeof BrowserWindow> | null;
-  if (!isWhisperSuperCmdTextTargetWindow(focusedWindow)) {
-    whisperSuperCmdTextTargetWindow = null;
+  if (!isWhisperDiscovTextTargetWindow(focusedWindow)) {
+    whisperDiscovTextTargetWindow = null;
     return;
   }
   void focusedWindow.webContents.executeJavaScript(buildWhisperTextTargetCaptureScript(), true)
     .then((captured: unknown) => {
-      whisperSuperCmdTextTargetWindow = captured ? focusedWindow : null;
+      whisperDiscovTextTargetWindow = captured ? focusedWindow : null;
     })
     .catch(() => {
-      if (whisperSuperCmdTextTargetWindow === focusedWindow) {
-        whisperSuperCmdTextTargetWindow = null;
+      if (whisperDiscovTextTargetWindow === focusedWindow) {
+        whisperDiscovTextTargetWindow = null;
       }
     });
 }
 
-async function insertTextIntoWhisperSuperCmdTarget(text: string): Promise<boolean> {
-  const targetWindow = whisperSuperCmdTextTargetWindow;
-  if (!isWhisperSuperCmdTextTargetWindow(targetWindow)) return false;
+async function insertTextIntoWhisperDiscovTarget(text: string): Promise<boolean> {
+  const targetWindow = whisperDiscovTextTargetWindow;
+  if (!isWhisperDiscovTextTargetWindow(targetWindow)) return false;
   const textLiteral = JSON.stringify(String(text || ''));
   try {
     return Boolean(await targetWindow.webContents.executeJavaScript(
-      `Boolean(window.__supercmdInsertWhisperText && window.__supercmdInsertWhisperText(${textLiteral}))`,
+      `Boolean(window.__discovInsertWhisperText && window.__discovInsertWhisperText(${textLiteral}))`,
       true
     ));
   } catch {
@@ -5523,7 +5521,7 @@ async function ensureSpeechRecognitionAccess(prompt = true): Promise<SpeechRecog
       requested: false,
       speechStatus: 'unknown',
       microphoneStatus: readMicrophoneAccessStatus(),
-      error: 'Speech recognizer helper is missing. Reinstall SuperCmd and retry.',
+      error: 'Speech recognizer helper is missing. Reinstall Discov and retry.',
     };
   }
 
@@ -5723,7 +5721,7 @@ function transcribeAudioWithElevenLabs(opts: {
   language?: string;
   mimeType?: string;
 }): Promise<string> {
-  const boundary = `----SuperCmdBoundary${Date.now()}${Math.random().toString(36).slice(2)}`;
+  const boundary = `----DiscovBoundary${Date.now()}${Math.random().toString(36).slice(2)}`;
   const parts: Buffer[] = [];
   const normalized = String(opts.mimeType || '').toLowerCase();
   const filename = normalized.includes('wav')
@@ -5820,7 +5818,7 @@ function transcribeAudioWithMistralVoxtral(opts: {
   language?: string;
   mimeType?: string;
 }): Promise<string> {
-  const boundary = `----SuperCmdMistralBoundary${Date.now()}${Math.random().toString(36).slice(2)}`;
+  const boundary = `----DiscovMistralBoundary${Date.now()}${Math.random().toString(36).slice(2)}`;
   const normalized = String(opts.mimeType || '').toLowerCase();
   const filename = normalized.includes('mp3') || normalized.includes('mpeg') ? 'audio.mp3' : 'audio.wav';
   const contentType = filename.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav';
@@ -6258,7 +6256,7 @@ function stopSpeakSession(options?: { resetStatus?: boolean; cleanupWindow?: boo
     }
     if (options?.cleanupWindow) {
       try {
-        mainWindow?.webContents.send('run-system-command', 'system-supercmd-speak-close');
+        mainWindow?.webContents.send('run-system-command', 'system-discov-speak-close');
       } catch {}
     }
     return;
@@ -6292,7 +6290,7 @@ function stopSpeakSession(options?: { resetStatus?: boolean; cleanupWindow?: boo
   }
   if (options?.cleanupWindow) {
     try {
-      mainWindow?.webContents.send('run-system-command', 'system-supercmd-speak-close');
+      mainWindow?.webContents.send('run-system-command', 'system-discov-speak-close');
     } catch {}
   }
 }
@@ -7056,7 +7054,7 @@ function startFnSpeakToggleWatcher(): void {
               mainWindow?.webContents.send('whisper-start-listening');
               return;
             }
-            await openLauncherAndRunSystemCommand('system-supercmd-whisper', {
+            await openLauncherAndRunSystemCommand('system-discov-whisper', {
               showWindow: false,
               mode: launcherMode === 'onboarding' ? 'onboarding' : 'default',
               preserveFocusWhenHidden: launcherMode !== 'onboarding',
@@ -7120,7 +7118,7 @@ function syncFnSpeakToggleWatcher(hotkeys: Record<string, string>): void {
     stopFnSpeakToggleWatcher();
     return;
   }
-  const speakToggle = String(hotkeys?.['system-supercmd-whisper-speak-toggle'] || '').trim();
+  const speakToggle = String(hotkeys?.['system-discov-whisper-speak-toggle'] || '').trim();
   const shouldEnable = needsNativeHoldWatcher(speakToggle);
   if (!shouldEnable) {
     fnSpeakToggleCurrentShortcut = '';
@@ -7145,7 +7143,7 @@ function syncFnCommandWatchers(hotkeys: Record<string, string>): void {
     const shortcut = String(shortcutRaw || '').trim();
     if (!shortcut) continue;
     const normalized = normalizeAccelerator(shortcut);
-    const isFnSpeakToggle = commandId === 'system-supercmd-whisper-speak-toggle' && (isFnOnlyShortcut(normalized) || isStandaloneModifierShortcut(normalized));
+    const isFnSpeakToggle = commandId === 'system-discov-whisper-speak-toggle' && (isFnOnlyShortcut(normalized) || isStandaloneModifierShortcut(normalized));
     if (isFnSpeakToggle) continue;
     if (!isFnShortcut(normalized)) continue;
     desired.set(commandId, normalized);
@@ -7276,7 +7274,7 @@ function handleOAuthCallbackUrl(rawUrl: string): void {
   console.log('[OAuth] handleOAuthCallbackUrl called with:', rawUrl);
   try {
     const parsed = new URL(rawUrl);
-    if (parsed.protocol !== 'supercmd:') return;
+    if (parsed.protocol !== 'discov:') return;
     const isOAuthCallback =
       (parsed.hostname === 'oauth' && parsed.pathname === '/callback') ||
       parsed.pathname === '/oauth/callback' ||
@@ -7328,11 +7326,11 @@ app.on('open-url', (event: any, url: string) => {
   event.preventDefault();
   console.log('[open-url] event received:', url);
 
-  // Handle note deeplinks: supercmd://notes/<note-id>
-  // Handle canvas deeplinks: supercmd://canvas/<canvas-id>
+  // Handle note deeplinks: discov://notes/<note-id>
+  // Handle canvas deeplinks: discov://canvas/<canvas-id>
   try {
     const parsed = new URL(url);
-    if (parsed.protocol === 'supercmd:' && parsed.hostname === 'notes') {
+    if (parsed.protocol === 'discov:' && parsed.hostname === 'notes') {
       const noteId = parsed.pathname.replace(/^\//, '');
       if (noteId) {
         const note = getNoteById(noteId);
@@ -7343,7 +7341,7 @@ app.on('open-url', (event: any, url: string) => {
         }
       }
     }
-    if (parsed.protocol === 'supercmd:' && parsed.hostname === 'canvas') {
+    if (parsed.protocol === 'discov:' && parsed.hostname === 'canvas') {
       const canvasId = parsed.pathname.replace(/^\//, '');
       if (canvasId) {
         pendingCanvasJson = JSON.stringify({ id: canvasId });
@@ -7355,8 +7353,8 @@ app.on('open-url', (event: any, url: string) => {
     // not a valid URL, fall through to OAuth
   }
 
-  // Handle command-launch deeplinks: supercmd://extensions/<owner>/<ext>/<cmd>
-  // and supercmd://script-commands/<slug> (plus legacy raycast:// equivalents).
+  // Handle command-launch deeplinks: discov://extensions/<owner>/<ext>/<cmd>
+  // and discov://script-commands/<slug> (plus legacy raycast:// equivalents).
   if (isCommandDeepLink(url)) {
     void launchCommandDeepLink(url).catch((e) => {
       console.error(`[open-url] Failed to launch command deeplink: ${url}`, e);
@@ -7416,13 +7414,13 @@ function loadAppTrayIcon(): any {
   // SVG via createFromPath is handled by macOS NSImage natively → resolution-independent.
   // PNG is the fallback for environments where SVG loading fails.
   const candidates = [
-    path.join(process.cwd(), 'supercmd.svg'),
-    path.join(app.getAppPath(), 'supercmd.svg'),
-    path.join(process.resourcesPath || '', 'supercmd.svg'),
-    path.join(process.cwd(), 'supercmd.png'),
-    path.join(app.getAppPath(), 'supercmd.png'),
-    path.join(process.resourcesPath || '', 'supercmd.png'),
-    path.join(process.resourcesPath || '', 'supercmd.icns'),
+    path.join(process.cwd(), 'discov.svg'),
+    path.join(app.getAppPath(), 'discov.svg'),
+    path.join(process.resourcesPath || '', 'discov.svg'),
+    path.join(process.cwd(), 'discov.png'),
+    path.join(app.getAppPath(), 'discov.png'),
+    path.join(process.resourcesPath || '', 'discov.png'),
+    path.join(process.resourcesPath || '', 'discov.icns'),
     path.join(process.resourcesPath || '', 'icon.png'),
     path.join(process.resourcesPath || '', 'icon.icns'),
   ].filter(Boolean);
@@ -7483,18 +7481,18 @@ function ensureAppTray(): void {
     if (process.platform === 'darwin' && iconInvisible) {
       appTray.setTitle('⌘');
     }
-    appTray.setToolTip('SuperCmd');
+    appTray.setToolTip('Discov');
     appTray.setContextMenu(
       Menu.buildFromTemplate([
         {
-          label: 'Open SuperCmd',
+          label: 'Open Discov',
           click: () => {
             void openLauncherFromUserEntry();
           },
         },
         { type: 'separator' },
         {
-          label: 'Quit SuperCmd',
+          label: 'Quit Discov',
           click: () => {
             app.quit();
           },
@@ -7595,14 +7593,14 @@ type ParsedCommandDeepLink =
     };
 
 /**
- * Parse `supercmd://extensions/...` / `supercmd://script-commands/...` deeplinks.
+ * Parse `discov://extensions/...` / `discov://script-commands/...` deeplinks.
  * Also accepts the legacy `raycast://` scheme so extension authors that emit
  * Raycast-style URLs keep working.
  */
 function parseCommandDeepLink(url: string): ParsedCommandDeepLink | null {
   try {
     const parsed = new URL(url);
-    if (parsed.protocol !== 'supercmd:' && parsed.protocol !== 'raycast:') return null;
+    if (parsed.protocol !== 'discov:' && parsed.protocol !== 'raycast:') return null;
 
     const parts = parsed.pathname.split('/').filter(Boolean).map((v) => decodeURIComponent(v));
 
@@ -7642,10 +7640,10 @@ function parseCommandDeepLink(url: string): ParsedCommandDeepLink | null {
       };
     }
 
-    // `commands/<id>` is a SuperCmd-specific universal launcher — Raycast
+    // `commands/<id>` is a Discov-specific universal launcher — Raycast
     // doesn't expose its internal command ids, so we only accept the
-    // `supercmd://` scheme here (not the legacy `raycast://` compat scheme).
-    if (parsed.hostname === 'commands' && parsed.protocol === 'supercmd:') {
+    // `discov://` scheme here (not the legacy `raycast://` compat scheme).
+    if (parsed.hostname === 'commands' && parsed.protocol === 'discov:') {
       const commandId = parts.join('/').trim();
       if (!commandId) return null;
       return {
@@ -7662,13 +7660,13 @@ function parseCommandDeepLink(url: string): ParsedCommandDeepLink | null {
 
 /**
  * True when the URL looks like a command-launch deeplink we can handle
- * (supercmd://extensions/..., supercmd://script-commands/..., or the
+ * (discov://extensions/..., discov://script-commands/..., or the
  * legacy raycast:// equivalents).
  */
 function isCommandDeepLink(url: string): boolean {
   if (!url) return false;
   if (url.startsWith('raycast://')) return true;
-  if (!url.startsWith('supercmd://')) return false;
+  if (!url.startsWith('discov://')) return false;
   try {
     const host = new URL(url).hostname;
     return host === 'extensions' || host === 'script-commands' || host === 'commands';
@@ -7937,8 +7935,8 @@ async function handleRendererRecoveryGiveUp(logMessage: string): Promise<void> {
       defaultId: 0,
       cancelId: 1,
       noLink: true,
-      title: 'SuperCmd needs to restart',
-      message: 'SuperCmd ran into a problem',
+      title: 'Discov needs to restart',
+      message: 'Discov ran into a problem',
       detail:
         'The launcher stopped responding and could not recover on its own. ' +
         'Relaunch to continue.',
@@ -8142,16 +8140,16 @@ function createWindow(): void {
         y: popupPos.y,
         title:
           detachedPopupName === DETACHED_WHISPER_WINDOW_NAME
-            ? 'SuperCmd Whisper'
+            ? 'Discov Whisper'
             : detachedPopupName === DETACHED_WHISPER_ONBOARDING_WINDOW_NAME
-            ? 'SuperCmd Whisper Onboarding'
+            ? 'Discov Whisper Onboarding'
             : detachedPopupName === DETACHED_PROMPT_WINDOW_NAME
-              ? 'SuperCmd Prompt'
+              ? 'Discov Prompt'
               : detachedPopupName === DETACHED_WINDOW_MANAGER_WINDOW_NAME
-                ? 'SuperCmd Window Manager'
+                ? 'Discov Window Manager'
               : detachedPopupName === DETACHED_MEMORY_STATUS_WINDOW_NAME
-                ? 'SuperCmd Status'
-              : 'SuperCmd Read',
+                ? 'Discov Status'
+              : 'Discov Read',
         frame: false,
         titleBarStyle: 'hidden',
         titleBarOverlay: false,
@@ -8177,7 +8175,7 @@ function createWindow(): void {
         skipTaskbar: true,
         alwaysOnTop: true,
         // Create the whisper popup hidden then showInactive() in did-create-window
-        // so that macOS does not activate the SuperCmd app (which would briefly
+        // so that macOS does not activate the Discov app (which would briefly
         // raise the settings window if it was previously opened).
         show: detachedPopupName !== DETACHED_WHISPER_WINDOW_NAME,
         acceptFirstMouse: true,
@@ -9038,7 +9036,7 @@ function captureFrontmostAppContext(): void {
         info.match(/"name"\s*=\s*"([^"]*)"/i)?.[1]?.trim() ||
         '';
       const appPath = info.match(/"path"\s*=\s*"([^"]*)"/)?.[1]?.trim() || '';
-      if (bundleId !== 'com.supercmd.app' && bundleId !== 'com.supercmd' && name !== 'SuperCmd' && name !== 'Electron') {
+      if (bundleId !== 'com.discov.app' && bundleId !== 'com.discov' && name !== 'Discov' && name !== 'Electron') {
         if (bundleId || name || appPath) {
           lastFrontmostApp = {
             name: name || (bundleId ? bundleId : 'Unknown'),
@@ -9073,7 +9071,7 @@ function captureFrontmostAppContext(): void {
     const result = execSync(`osascript -e '${script.replace(/'/g, "'\"'\"'")}'`, { encoding: 'utf-8' }).trim();
     markSystemEventsPermissionGranted();
     const [name, appPath, bundleId] = result.split('|||');
-    if (bundleId !== 'com.supercmd' && name !== 'SuperCmd' && name !== 'Electron') {
+    if (bundleId !== 'com.discov' && name !== 'Discov' && name !== 'Electron') {
       lastFrontmostApp = { name, path: appPath, bundleId };
     }
   } catch {
@@ -9273,7 +9271,7 @@ async function showWindow(options?: { systemCommandId?: string }): Promise<void>
 function hideWindow(): void {
   if (!mainWindow) return;
   // Already hidden — calling mainWindow.hide() again on macOS triggers an
-  // NSWindow orderOut which can shift focus to another SuperCmd window (e.g.
+  // NSWindow orderOut which can shift focus to another Discov window (e.g.
   // the settings window), causing paste/keystroke events to land there instead
   // of the user's active app.
   if (!isVisible) return;
@@ -9322,10 +9320,10 @@ function openPreferredDevTools(): boolean {
 }
 
 async function activateLastFrontmostApp(): Promise<boolean> {
-  if (isWhisperSuperCmdTextTargetWindow(whisperSuperCmdTextTargetWindow)) {
+  if (isWhisperDiscovTextTargetWindow(whisperDiscovTextTargetWindow)) {
     try {
-      whisperSuperCmdTextTargetWindow.show();
-      whisperSuperCmdTextTargetWindow.focus();
+      whisperDiscovTextTargetWindow.show();
+      whisperDiscovTextTargetWindow.focus();
       return true;
     } catch {}
   }
@@ -10413,8 +10411,8 @@ async function openLauncherAndRunSystemCommand(
   if (preserveFocusWhenHidden) {
     captureFrontmostAppContext();
   }
-  if (commandId === 'system-supercmd-whisper') {
-    captureWhisperSuperCmdTextTarget();
+  if (commandId === 'system-discov-whisper') {
+    captureWhisperDiscovTextTarget();
     markWhisperOverlayOpening();
   }
   setLauncherMode(options?.mode || 'default');
@@ -10439,7 +10437,7 @@ async function openLauncherAndRunSystemCommand(
       mainWindow?.webContents.send('run-system-command', commandId);
     }
     if (preserveFocusWhenHidden && !showLauncher) {
-      // Detached overlays can temporarily activate SuperCmd; restore the editor app.
+      // Detached overlays can temporarily activate Discov; restore the editor app.
       [50, 180, 360].forEach((delayMs) => {
         setTimeout(() => {
           if (isVisible) return;
@@ -10484,10 +10482,10 @@ async function dispatchRendererCustomEvent(eventName: string, detail: any): Prom
 const AI_DISABLED_SYSTEM_COMMANDS = new Set<string>([
   'system-cursor-prompt',
   'system-add-to-memory',
-  'system-supercmd-whisper',
-  'system-supercmd-whisper-toggle',
-  'system-supercmd-whisper-speak-toggle',
-  'system-supercmd-speak',
+  'system-discov-whisper',
+  'system-discov-whisper-toggle',
+  'system-discov-whisper-speak-toggle',
+  'system-discov-speak',
 ]);
 
 function isAIDisabledInSettings(settings?: AppSettings): boolean {
@@ -10503,8 +10501,8 @@ function isAISectionDisabledForCommand(commandId: string, settings?: AppSettings
   const resolved = settings || loadSettings();
   const id = String(commandId || '').trim();
   if (!id) return false;
-  if (id === 'system-supercmd-speak') return resolved.ai?.readEnabled === false;
-  if (id === 'system-supercmd-whisper' || id === 'system-supercmd-whisper-toggle' || id === 'system-supercmd-whisper-speak-toggle') {
+  if (id === 'system-discov-speak') return resolved.ai?.readEnabled === false;
+  if (id === 'system-discov-whisper' || id === 'system-discov-whisper-toggle' || id === 'system-discov-whisper-speak-toggle') {
     return resolved.ai?.whisperEnabled === false;
   }
   if (id === 'system-cursor-prompt' || id === 'system-add-to-memory') return resolved.ai?.llmEnabled === false;
@@ -10664,7 +10662,7 @@ async function confirmQuitAllApps(source: 'launcher' | 'hotkey' | 'widget'): Pro
     noLink: true,
     title,
     message: `${title}?`,
-    detail: 'This will ask all currently running apps to quit. Finder and SuperCmd stay open.',
+    detail: 'This will ask all currently running apps to quit. Finder and Discov stay open.',
     icon,
   };
 
@@ -10694,11 +10692,11 @@ async function runCommandById(commandId: string, source: 'launcher' | 'hotkey' |
   }
 
   const isWhisperOpenCommand =
-    commandId === 'system-supercmd-whisper' ||
-    commandId === 'system-supercmd-whisper-toggle';
-  const isWhisperSpeakToggleCommand = commandId === 'system-supercmd-whisper-speak-toggle';
+    commandId === 'system-discov-whisper' ||
+    commandId === 'system-discov-whisper-toggle';
+  const isWhisperSpeakToggleCommand = commandId === 'system-discov-whisper-speak-toggle';
   const isWhisperCommand = isWhisperOpenCommand || isWhisperSpeakToggleCommand;
-  const isSpeakCommand = commandId === 'system-supercmd-speak';
+  const isSpeakCommand = commandId === 'system-discov-speak';
   const isCursorPromptCommand = commandId === 'system-cursor-prompt';
 
   if (isWhisperOpenCommand && source === 'hotkey') {
@@ -10710,7 +10708,7 @@ async function runCommandById(commandId: string, source: 'launcher' | 'hotkey' |
   }
 
   if (isWhisperSpeakToggleCommand) {
-    const speakToggleHotkey = String(loadSettings().commandHotkeys?.['system-supercmd-whisper-speak-toggle'] ?? '').trim();
+    const speakToggleHotkey = String(loadSettings().commandHotkeys?.['system-discov-whisper-speak-toggle'] ?? '').trim();
     const holdSeq = ++whisperHoldRequestSeq;
 
     // Start native audio capture immediately — this takes ~10-30ms
@@ -10748,7 +10746,7 @@ async function runCommandById(commandId: string, source: 'launcher' | 'hotkey' |
     if (speakToggleHotkey) {
       startWhisperHoldWatcher(speakToggleHotkey, holdSeq);
     }
-    await openLauncherAndRunSystemCommand('system-supercmd-whisper', {
+    await openLauncherAndRunSystemCommand('system-discov-whisper', {
       showWindow: false,
       mode: launcherMode === 'onboarding' ? 'onboarding' : 'default',
       preserveFocusWhenHidden: launcherMode !== 'onboarding',
@@ -10774,7 +10772,7 @@ async function runCommandById(commandId: string, source: 'launcher' | 'hotkey' |
     }
     const started = await startSpeakFromSelection();
     if (!started) return false;
-    await openLauncherAndRunSystemCommand('system-supercmd-speak', {
+    await openLauncherAndRunSystemCommand('system-discov-speak', {
       showWindow: false,
       mode: launcherMode === 'onboarding' ? 'onboarding' : 'default',
       preserveFocusWhenHidden: launcherMode !== 'onboarding',
@@ -11022,7 +11020,7 @@ async function runCommandById(commandId: string, source: 'launcher' | 'hotkey' |
     lastWhisperShownAt = Date.now();
     whisperHoldRequestSeq += 1;
     stopWhisperHoldWatcher();
-    return await openLauncherAndRunSystemCommand('system-supercmd-whisper', {
+    return await openLauncherAndRunSystemCommand('system-discov-whisper', {
       showWindow: source === 'launcher',
       mode: launcherMode === 'onboarding' ? 'onboarding' : 'default',
     });
@@ -11141,7 +11139,7 @@ async function runCommandById(commandId: string, source: 'launcher' | 'hotkey' |
     return await openLauncherAndRunSystemCommand(commandId, {
       showWindow: false,
       mode: launcherMode === 'onboarding' ? 'onboarding' : 'default',
-      // Keep focus in SuperCmd only for the panel command: detached window manager
+      // Keep focus in Discov only for the panel command: detached window manager
       // closes itself on blur. Preset commands should restore app focus normally.
       preserveFocusWhenHidden: commandId !== 'system-window-management',
     });
@@ -11173,7 +11171,7 @@ async function runCommandById(commandId: string, source: 'launcher' | 'hotkey' |
   }
   if (commandId === 'system-open-script-commands') {
     try {
-      const dir = getSuperCmdScriptCommandsDirectory();
+      const dir = getDiscovScriptCommandsDirectory();
       void shell.openPath(dir).catch((error: unknown) => {
         console.error('Failed to open script command directory:', error);
       });
@@ -11365,7 +11363,7 @@ async function startSpeakFromSelection(): Promise<boolean> {
         text: '',
         index: 0,
         total: chunks.length,
-        message: 'No local speech runtime is available. Reinstall SuperCmd and retry.',
+        message: 'No local speech runtime is available. Reinstall Discov and retry.',
       });
       return false;
     }
@@ -11374,7 +11372,7 @@ async function startSpeakFromSelection(): Promise<boolean> {
   const fs = require('fs');
   const os = require('os');
   const pathMod = require('path');
-  const tmpDir = fs.mkdtempSync(pathMod.join(os.tmpdir(), 'supercmd-speak-'));
+  const tmpDir = fs.mkdtempSync(pathMod.join(os.tmpdir(), 'discov-speak-'));
   const sessionId = ++speakSessionCounter;
   const session = {
     id: sessionId,
@@ -12504,6 +12502,8 @@ async function installCanvasLib(sender: any): Promise<void> {
     }
 
     // Production: download the pre-built bundle from S3
+    // TODO(rebrand): upstream SuperCmd bucket, kept so Canvas keeps working
+    // until the bundle is republished under a Discov-owned bucket.
     const bundleUrl = 'https://supercmd-extensions.s3.amazonaws.com/canvas/excalidraw-bundle.tgz';
     const response = await net.fetch(bundleUrl);
 
@@ -13407,7 +13407,7 @@ function disableMacSpotlightShortcuts(): boolean {
   }
 }
 
-async function replaceSpotlightWithSuperCmdShortcut(): Promise<boolean> {
+async function replaceSpotlightWithDiscovShortcut(): Promise<boolean> {
   const disabled = disableMacSpotlightShortcuts();
   const targetShortcut = 'Command+Space';
   const delaysMs = [0, 140, 340];
@@ -13495,10 +13495,10 @@ function registerCommandHotkeys(hotkeys: Record<string, string>): void {
     if (!shortcut) continue;
 
     const normalizedShortcut = normalizeAccelerator(shortcut);
-    if (commandId === 'system-supercmd-whisper-speak-toggle' && isFnOnlyShortcut(normalizedShortcut)) {
+    if (commandId === 'system-discov-whisper-speak-toggle' && isFnOnlyShortcut(normalizedShortcut)) {
       continue;
     }
-    if (commandId === 'system-supercmd-whisper-speak-toggle' && isStandaloneModifierShortcut(normalizedShortcut)) {
+    if (commandId === 'system-discov-whisper-speak-toggle' && isStandaloneModifierShortcut(normalizedShortcut)) {
       continue;
     }
     if (isFnShortcut(normalizedShortcut)) {
@@ -13572,8 +13572,6 @@ async function rebuildExtensions() {
   }
 }
 
-initAptabase("A-US-7660732429");
-
 // Register custom protocol for serving extension assets (images etc.)
 // Must be called before app.whenReady()
 protocol.registerSchemesAsPrivileged([
@@ -13602,8 +13600,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.whenReady().then(async () => {
-  trackEvent("app_started");
-  app.setAsDefaultProtocolClient('supercmd');
+  app.setAsDefaultProtocolClient('discov');
   scrubInternalClipboardProbe('app startup');
   // Warm the worker so the first window-management action does not race spawn.
   setTimeout(() => { ensureWindowManagerWorker(); }, 0);
@@ -13807,10 +13804,10 @@ app.whenReady().then(async () => {
 
   // Rebuilding all extensions on every startup can stall app launch if one
   // extension build hangs. Keep startup fast by default; allow opt-in.
-  if (process.env.SUPERCMD_REBUILD_EXTENSIONS_ON_STARTUP === '1') {
+  if (process.env.DISCOV_REBUILD_EXTENSIONS_ON_STARTUP === '1') {
     rebuildExtensions().catch(console.error);
   } else {
-    console.log('Skipping startup extension rebuild (set SUPERCMD_REBUILD_EXTENSIONS_ON_STARTUP=1 to enable).');
+    console.log('Skipping startup extension rebuild (set DISCOV_REBUILD_EXTENSIONS_ON_STARTUP=1 to enable).');
   }
 
   // ─── IPC: Launcher ──────────────────────────────────────────────
@@ -13938,7 +13935,7 @@ app.whenReady().then(async () => {
         lastWhisperShownAt = Date.now();
       } else {
         whisperHoldRequestSeq += 1;
-        whisperSuperCmdTextTargetWindow = null;
+        whisperDiscovTextTargetWindow = null;
         stopWhisperHoldWatcher();
         // Stop native audio capturer when the whisper overlay closes
         // to release the microphone
@@ -14027,8 +14024,8 @@ app.whenReady().then(async () => {
       const provider = payload?.provider || (String(settings.ai?.textToSpeechModel || '').startsWith('elevenlabs-') ? 'elevenlabs' : 'edge-tts');
       const voice = String(payload?.voice || speakRuntimeOptions.voice || 'en-US-EricNeural').trim();
       const rate = parseSpeakRateInput(payload?.rate ?? speakRuntimeOptions.rate);
-      const sampleTextRaw = String(payload?.text || 'Hi, this is my voice in SuperCmd.');
-      const sampleText = sampleTextRaw.trim().slice(0, 240) || 'Hi, this is my voice in SuperCmd.';
+      const sampleTextRaw = String(payload?.text || 'Hi, this is my voice in Discov.');
+      const sampleText = sampleTextRaw.trim().slice(0, 240) || 'Hi, this is my voice in Discov.';
 
       const fs = require('fs');
       const os = require('os');
@@ -14036,7 +14033,7 @@ app.whenReady().then(async () => {
       const { spawn } = require('child_process');
       const localSpeakBackend = provider === 'edge-tts' ? resolveLocalSpeakBackend() : null;
 
-      const tmpDir = fs.mkdtempSync(pathMod.join(os.tmpdir(), 'supercmd-voice-preview-'));
+      const tmpDir = fs.mkdtempSync(pathMod.join(os.tmpdir(), 'discov-voice-preview-'));
       const previewExtension = provider === 'elevenlabs' || localSpeakBackend === 'edge-tts' ? 'mp3' : 'aiff';
       const audioPath = pathMod.join(tmpDir, `preview.${previewExtension}`);
 
@@ -14760,8 +14757,8 @@ app.whenReady().then(async () => {
     return applied;
   });
 
-  ipcMain.handle('replace-spotlight-with-supercmd', async () => {
-    return await replaceSpotlightWithSuperCmdShortcut();
+  ipcMain.handle('replace-spotlight-with-discov', async () => {
+    return await replaceSpotlightWithDiscovShortcut();
   });
 
   ipcMain.handle('onboarding-request-permission', async (_event: any, target: OnboardingPermissionTarget) => {
@@ -14841,7 +14838,7 @@ app.whenReady().then(async () => {
         }
 
         const isFnSpeakToggle =
-          commandId === 'system-supercmd-whisper-speak-toggle' &&
+          commandId === 'system-discov-whisper-speak-toggle' &&
           (isFnOnlyShortcut(normalizedHotkey) || isStandaloneModifierShortcut(normalizedHotkey));
         const isFnHotkey = isFnShortcut(normalizedHotkey);
         const isHyperHotkey = isHyperShortcut(normalizedHotkey);
@@ -15605,7 +15602,7 @@ app.whenReady().then(async () => {
           parsed.toString(),
           {
             headers: {
-              'User-Agent': 'SuperCmd/1.0 (+https://github.com/raycast/extensions)',
+              'User-Agent': 'Discov/1.0 (+https://github.com/raycast/extensions)',
               Accept: '*/*',
             },
           },
@@ -15812,7 +15809,7 @@ return appURL's |path|() as text`,
     }
 
     if (!systemEventsPermissionConfirmed) {
-      return { name: 'SuperCmd', path: '', bundleId: 'com.supercmd' };
+      return { name: 'Discov', path: '', bundleId: 'com.discov' };
     }
 
     try {
@@ -15831,7 +15828,7 @@ return appURL's |path|() as text`,
       const [name, appPath, bundleId] = result.split('|||');
       return { name, path: appPath, bundleId };
     } catch (e) {
-      return { name: 'SuperCmd', path: '', bundleId: 'com.supercmd' };
+      return { name: 'Discov', path: '', bundleId: 'com.discov' };
     }
   });
 
@@ -16112,7 +16109,7 @@ return appURL's |path|() as text`,
       }).trim();
     } catch {
       // Fallback: use app name as identifier
-      bundleId = 'supercmd.autoquit.' + safeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      bundleId = 'discov.autoquit.' + safeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     }
     if (!bundleId) return;
 
@@ -16346,7 +16343,7 @@ return appURL's |path|() as text`,
     async (_event: any, name: string) => {
       const success = await installExtension(name);
       if (!success) {
-        throw new Error(`Failed to install extension "${name}". Check SuperCmd main-process logs for details.`);
+        throw new Error(`Failed to install extension "${name}". Check Discov main-process logs for details.`);
       }
       // Invalidate the command cache and rebuild it BEFORE we broadcast, so
       // the renderer's follow-up get-commands fetch lands on fresh data
@@ -17401,7 +17398,7 @@ if let tiff = image?.tiffRepresentation {
   });
 
   // Paste a file (image/GIF) into the previously focused app.
-  // Writes file data to clipboard, hides SuperCmd, and simulates Cmd+V,
+  // Writes file data to clipboard, hides Discov, and simulates Cmd+V,
   // then restores the previous clipboard contents.
   ipcMain.handle('paste-file', async (_event: any, filePath: string) => {
     const fs = require('fs') as typeof import('fs');
@@ -17486,7 +17483,7 @@ if let tiff = image?.tiffRepresentation {
       return { typed: false, fallbackClipboard: false };
     }
 
-    if (await insertTextIntoWhisperSuperCmdTarget(nextText)) {
+    if (await insertTextIntoWhisperDiscovTarget(nextText)) {
       return { typed: true, fallbackClipboard: false };
     }
 
@@ -17816,7 +17813,7 @@ if let tiff = image?.tiffRepresentation {
         throw new Error('AI is disabled. Enable AI in Settings -> AI to use Whisper.');
       }
       if (s.ai?.whisperEnabled === false) {
-        throw new Error('SuperCmd Whisper is disabled in Settings -> AI.');
+        throw new Error('Discov Whisper is disabled in Settings -> AI.');
       }
 
       if (!fs.existsSync(audioPath)) {
@@ -17917,7 +17914,7 @@ if let tiff = image?.tiffRepresentation {
         throw new Error('AI is disabled. Enable AI in Settings -> AI to use Whisper.');
       }
       if (s.ai?.whisperEnabled === false) {
-        throw new Error('SuperCmd Whisper is disabled in Settings -> AI.');
+        throw new Error('Discov Whisper is disabled in Settings -> AI.');
       }
 
       // Parse speechToTextModel to a concrete provider/model pair.
@@ -18928,7 +18925,7 @@ if let tiff = image?.tiffRepresentation {
       const result = await dialog.showOpenDialog(getDialogParentWindow(event), {
         properties: ['openDirectory', 'createDirectory', 'dontAddToRecent'],
         buttonLabel: 'Choose',
-        message: 'Choose a folder to store SuperCmd settings',
+        message: 'Choose a folder to store Discov settings',
         defaultPath: app.getPath('home'),
       });
       if (result.canceled) return null;
@@ -19270,7 +19267,7 @@ if let tiff = image?.tiffRepresentation {
   registerCommandHotkeys(settings.commandHotkeys);
   registerDevToolsShortcut();
 
-  // Fallback: when another SuperCmd window gains focus (e.g. Settings),
+  // Fallback: when another Discov window gains focus (e.g. Settings),
   // close the launcher in default mode even if a native blur event was missed.
   app.on('browser-window-focus', (_event: any, focusedWindow: InstanceType<typeof BrowserWindow>) => {
     if (!mainWindow || !isVisible) return;
@@ -19300,8 +19297,8 @@ if let tiff = image?.tiffRepresentation {
 
   app.on('activate', () => {
     // During onboarding the window is shown but may lose visual focus to a system
-    // permission dialog (e.g. "SuperCmd wants access to control System Events").
-    // When the user dismisses the dialog, macOS activates SuperCmd and we get this
+    // permission dialog (e.g. "Discov wants access to control System Events").
+    // When the user dismisses the dialog, macOS activates Discov and we get this
     // event. Bring the onboarding window back to the front so setup can continue.
     if (isVisible && launcherMode === 'onboarding' && mainWindow && !mainWindow.isDestroyed()) {
       try { app.focus({ steal: true }); } catch {}

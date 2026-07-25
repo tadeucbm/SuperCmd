@@ -1,4 +1,4 @@
-# SuperCmd UI Improvements
+# Discov UI Improvements
 
 ## Changes Made
 

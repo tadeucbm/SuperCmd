@@ -5,7 +5,7 @@ import Vision
 
 // screen-ocr
 //
-// Standalone helper for the SuperCmd "Screen OCR" feature (compatibility
+// Standalone helper for the Discov "Screen OCR" feature (compatibility
 // bridge for the Raycast `screenocr` extension). Spawned as a child process
 // by the main Electron process.
 //

@@ -1,5 +1,5 @@
 // audio-capturer.swift
-// Native audio capture helper for SuperCmd whisper dictation.
+// Native audio capture helper for Discov whisper dictation.
 //
 // Uses AVAudioEngine to capture microphone audio with minimal latency.
 // Communicates via JSON-over-stdin/stdout (same pattern as whisper-transcriber serve mode).
@@ -238,7 +238,7 @@ class AudioCapturer {
     }
 
     let tempDir = FileManager.default.temporaryDirectory
-      .appendingPathComponent("supercmd-audio-capture-\(UUID().uuidString)")
+      .appendingPathComponent("discov-audio-capture-\(UUID().uuidString)")
     let filePath = tempDir.path + "/captured.wav"
 
     do {
@@ -262,7 +262,7 @@ class AudioCapturer {
     }
 
     let tempDir = FileManager.default.temporaryDirectory
-      .appendingPathComponent("supercmd-audio-snapshot-\(UUID().uuidString)")
+      .appendingPathComponent("discov-audio-snapshot-\(UUID().uuidString)")
     let filePath = tempDir.path + "/snapshot.wav"
 
     do {

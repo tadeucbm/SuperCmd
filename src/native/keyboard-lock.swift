@@ -3,7 +3,7 @@ import Foundation
 
 // keyboard-lock
 //
-// Standalone helper for the SuperCmd "Lock Keyboard" feature (compatibility
+// Standalone helper for the Discov "Lock Keyboard" feature (compatibility
 // bridge for the Raycast `clean-keyboard` extension). Spawned as a child
 // process by the main Electron process.
 //

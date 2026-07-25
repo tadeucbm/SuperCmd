@@ -310,11 +310,11 @@ const CameraExtension: React.FC<CameraExtensionProps> = ({ onClose }) => {
     }, 140);
 
     const homeDir = String((window.electron as any)?.homeDir || '').trim();
-    const saveDir = homeDir ? `${homeDir}/Pictures/SuperCmd Captures` : '/tmp/SuperCmd Captures';
+    const saveDir = homeDir ? `${homeDir}/Pictures/Discov Captures` : '/tmp/Discov Captures';
     const now = new Date();
     const two = (value: number) => String(value).padStart(2, '0');
     const timestamp = `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}_${two(now.getHours())}-${two(now.getMinutes())}-${two(now.getSeconds())}`;
-    const savePath = `${saveDir}/supercmd-capture-${timestamp}.png`;
+    const savePath = `${saveDir}/discov-capture-${timestamp}.png`;
 
     let captureBlob: Blob | null = await new Promise((resolve) => {
       canvas.toBlob((blob) => resolve(blob), 'image/png');
@@ -621,8 +621,8 @@ const CameraExtension: React.FC<CameraExtensionProps> = ({ onClose }) => {
           </h3>
           <p className="text-xs text-[var(--text-subtle)] leading-relaxed">
             {loading
-              ? 'SuperCmd is requesting camera access.'
-              : errorText || 'Allow camera permission to view your camera feed in SuperCmd.'}
+              ? 'Discov is requesting camera access.'
+              : errorText || 'Allow camera permission to view your camera feed in Discov.'}
           </p>
           {!loading ? (
             <div className="flex items-center justify-center gap-2">

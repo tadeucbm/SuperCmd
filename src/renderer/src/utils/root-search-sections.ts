@@ -159,7 +159,7 @@ function assembleQueryResults(input: RootSearchSectionAssemblyInput): CommandInf
   // File and folder results live in their own "Files" section below the top
   // Results, never interleaved with commands. A file matching the query as a
   // leading prefix would otherwise outrank a command whose title matches only
-  // on a later word (e.g. "onboarding" vs "SuperCmd Onboarding").
+  // on a later word (e.g. "onboarding" vs "Discov Onboarding").
   const isFileResult = (candidate: RootSearchCandidate) => candidate.source === 'file';
   if (input.browserSearchSyntheticCommand) {
     const openUrlKey = getCommandStableKey(input.browserSearchSyntheticCommand);

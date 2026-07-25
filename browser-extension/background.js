@@ -1,15 +1,15 @@
-const SUPERCMD_BASE_URL = 'http://127.0.0.1:17373';
-const SNAPSHOT_ENDPOINT = `${SUPERCMD_BASE_URL}/browser-tabs/snapshot`;
-const HELLO_ENDPOINT = `${SUPERCMD_BASE_URL}/browser-tabs/hello`;
-const COMMANDS_ENDPOINT = `${SUPERCMD_BASE_URL}/browser-tabs/commands`;
-const COMMAND_RESULT_ENDPOINT = `${SUPERCMD_BASE_URL}/browser-tabs/command-result`;
+const DISCOV_BASE_URL = 'http://127.0.0.1:17373';
+const SNAPSHOT_ENDPOINT = `${DISCOV_BASE_URL}/browser-tabs/snapshot`;
+const HELLO_ENDPOINT = `${DISCOV_BASE_URL}/browser-tabs/hello`;
+const COMMANDS_ENDPOINT = `${DISCOV_BASE_URL}/browser-tabs/commands`;
+const COMMAND_RESULT_ENDPOINT = `${DISCOV_BASE_URL}/browser-tabs/command-result`;
 const SNAPSHOT_DEBOUNCE_MS = 250;
-const REPAIR_ALARM_NAME = 'supercmd-repair-snapshot';
+const REPAIR_ALARM_NAME = 'discov-repair-snapshot';
 
 let snapshotTimer = null;
 let lastSnapshotHash = '';
 let commandLoopRunning = false;
-let supercmdConnected = false;
+let discovConnected = false;
 let currentIdentity = null;
 let reconnectDelayMs = 500;
 const windowLastFocusedAt = new Map();
@@ -24,16 +24,16 @@ function scheduleSnapshot(reason) {
 
 async function discoverProfileIdentity() {
   const stored = await chrome.storage.local.get([
-    'supercmdBrowserId',
-    'supercmdBrowserName',
-    'supercmdProfileId',
-    'supercmdProfileName',
+    'discovBrowserId',
+    'discovBrowserName',
+    'discovProfileId',
+    'discovProfileName',
   ]);
   const browser = detectBrowser();
-  const browserId = cleanIdentifier(stored.supercmdBrowserId || browser.browserId || 'chrome');
-  const browserName = cleanName(stored.supercmdBrowserName || browser.browserName || browserId);
-  const profileId = cleanIdentifier(stored.supercmdProfileId || 'Default');
-  const profileName = cleanName(stored.supercmdProfileName || profileId);
+  const browserId = cleanIdentifier(stored.discovBrowserId || browser.browserId || 'chrome');
+  const browserName = cleanName(stored.discovBrowserName || browser.browserName || browserId);
+  const profileId = cleanIdentifier(stored.discovProfileId || 'Default');
+  const profileName = cleanName(stored.discovProfileName || profileId);
   return {
     browserId,
     browserName,
@@ -111,14 +111,14 @@ async function sendSnapshot(reason) {
   };
 
   const snapshotHash = JSON.stringify(payload.tabs);
-  if (supercmdConnected && snapshotHash === lastSnapshotHash) return;
+  if (discovConnected && snapshotHash === lastSnapshotHash) return;
 
   try {
     await post(SNAPSHOT_ENDPOINT, payload);
     lastSnapshotHash = snapshotHash;
-    supercmdConnected = true;
+    discovConnected = true;
   } catch {
-    supercmdConnected = false;
+    discovConnected = false;
   }
 }
 
@@ -129,13 +129,13 @@ async function connectLoop() {
     try {
       currentIdentity = await discoverProfileIdentity();
       await post(HELLO_ENDPOINT, currentIdentity);
-      supercmdConnected = true;
+      discovConnected = true;
       reconnectDelayMs = 500;
       lastSnapshotHash = '';
       await sendSnapshot('connected');
       await pollCommands(currentIdentity.profileSourceId);
     } catch {
-      supercmdConnected = false;
+      discovConnected = false;
       await delay(nextBackoffWithJitter());
     }
   }

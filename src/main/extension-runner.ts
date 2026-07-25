@@ -270,7 +270,7 @@ function getConfiguredExtensionRoots(): string[] {
   const settingsPaths = Array.isArray(loadSettings().customExtensionFolders)
     ? loadSettings().customExtensionFolders
     : [];
-  const envPaths = String(process.env.SUPERCMD_EXTENSION_PATHS || '')
+  const envPaths = String(process.env.DISCOV_EXTENSION_PATHS || '')
     .split(path.delimiter)
     .map((value) => value.trim())
     .filter(Boolean);
@@ -1509,7 +1509,7 @@ export async function getExtensionBundle(
   // the command fails. Work around this by exposing a symlink at a space-free /tmp path.
   let assetsPath = rawAssetsPath;
   if (rawAssetsPath.includes(' ') && fs.existsSync(rawAssetsPath)) {
-    const symlinkDir = path.join(os.tmpdir(), 'supercmd-assets');
+    const symlinkDir = path.join(os.tmpdir(), 'discov-assets');
     const symlinkPath = path.join(symlinkDir, normalizedExtName);
     try {
       fs.mkdirSync(symlinkDir, { recursive: true });

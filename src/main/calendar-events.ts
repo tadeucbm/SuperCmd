@@ -129,7 +129,7 @@ function normalizeCalendarPermissionResult(payload: any): CalendarPermissionResu
 
 async function runCalendarHelper(args: string[]): Promise<any> {
   const binaryPath = ensureCalendarEventsBinary();
-  if (!binaryPath) throw new Error('Calendar helper is unavailable. Reinstall SuperCmd or install Xcode Command Line Tools.');
+  if (!binaryPath) throw new Error('Calendar helper is unavailable. Reinstall Discov or install Xcode Command Line Tools.');
 
   return await new Promise<any>((resolve, reject) => {
     const proc = spawn(binaryPath, args, {

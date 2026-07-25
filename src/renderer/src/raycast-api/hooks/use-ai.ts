@@ -46,7 +46,7 @@ export function useAI(
 
     opts?.onWillExecute?.([promptRef.current]);
 
-    const ai = (window as any).__supercmdRaycastAI;
+    const ai = (window as any).__discovRaycastAI;
     if (!ai?.ask) {
       const missingErr = new Error('AI is not available');
       setError(missingErr);

@@ -178,20 +178,20 @@ function extractFsFacadeSource() {
 
 function assertFacadeFallthroughWiring() {
   const source = fs.readFileSync(EXTENSION_VIEW_PATH, 'utf8');
-  const helperIndex = source.indexOf('function getSuperCmdBuiltinFacade');
+  const helperIndex = source.indexOf('function getDiscovBuiltinFacade');
   assert.notEqual(helperIndex, -1, 'fakeRequire should use a facade helper with real-node fallthrough');
   assert.notEqual(
     source.indexOf('new Proxy(facade', helperIndex),
     -1,
-    'SuperCmd fs/child_process facades should proxy missing members to real Node modules'
+    'Discov fs/child_process facades should proxy missing members to real Node modules'
   );
 
   const fakeRequireIndex = source.indexOf('const fakeRequire: any = (name: string): any =>');
-  const facadeCallIndex = source.indexOf('getSuperCmdBuiltinFacade(name)', fakeRequireIndex);
+  const facadeCallIndex = source.indexOf('getDiscovBuiltinFacade(name)', fakeRequireIndex);
   const realRequireIndex = source.indexOf('tryRealNodeRequire(name)', fakeRequireIndex);
   assert.ok(
     fakeRequireIndex !== -1 && facadeCallIndex !== -1 && realRequireIndex !== -1 && facadeCallIndex < realRequireIndex,
-    'fakeRequire should resolve SuperCmd fs/child_process facades before generic real require'
+    'fakeRequire should resolve Discov fs/child_process facades before generic real require'
   );
 }
 
@@ -262,7 +262,7 @@ function loadFsFacade({ nodeAvailable, electron, localStorage }) {
 }
 
 function writeFixtureTree() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'supercmd-extension-sync-facade-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'discov-extension-sync-facade-'));
   const nestedDir = path.join(dir, 'nested');
   fs.mkdirSync(nestedDir);
   fs.writeFileSync(path.join(dir, 'real.txt'), 'real text', 'utf8');

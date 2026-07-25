@@ -58,7 +58,7 @@ const DEFAULT_TIMEOUT_MS = 60_000;
 
 let cache: { fetchedAt: number; commands: ScriptCommandInfo[] } | null = null;
 
-function getSuperCmdScriptsDir(): string {
+function getDiscovScriptsDir(): string {
   const dir = path.join(app.getPath('userData'), 'script-commands');
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -74,7 +74,7 @@ function expandHome(inputPath: string): string {
 }
 
 function getScriptCommandDirectories(): string[] {
-  const fromEnv = String(process.env.SUPERCMD_SCRIPT_COMMAND_PATHS || '')
+  const fromEnv = String(process.env.DISCOV_SCRIPT_COMMAND_PATHS || '')
     .split(path.delimiter)
     .map((v) => expandHome(v))
     .filter(Boolean);
@@ -83,7 +83,7 @@ function getScriptCommandDirectories(): string[] {
     .filter(Boolean);
 
   const defaults = [
-    getSuperCmdScriptsDir(),
+    getDiscovScriptsDir(),
     path.join(os.homedir(), 'raycast', 'script-commands'),
     path.join(os.homedir(), 'raycast', 'scripts'),
     path.join(os.homedir(), '.raycast', 'script-commands'),
@@ -634,7 +634,7 @@ function buildTemplateScript(title: string): string {
 # @raycast.mode fullOutput
 
 # Optional parameters:
-# @raycast.packageName SuperCmd
+# @raycast.packageName Discov
 # @raycast.icon 💡
 
 # Documentation:
@@ -645,7 +645,7 @@ echo "Hello from ${escapedTitle}"
 }
 
 export function createScriptCommandTemplate(): { scriptPath: string; scriptsDir: string } {
-  const scriptsDir = getSuperCmdScriptsDir();
+  const scriptsDir = getDiscovScriptsDir();
   const baseName = 'custom-script-command';
   let targetPath = path.join(scriptsDir, `${baseName}.sh`);
   let seq = 2;
@@ -673,7 +673,7 @@ export function ensureSampleScriptCommand(): {
   scriptPath?: string;
   created: boolean;
 } {
-  const scriptsDir = getSuperCmdScriptsDir();
+  const scriptsDir = getDiscovScriptsDir();
   const hasAnyScriptCommand = discoverScriptFiles(scriptsDir)
     .some((filePath) => Boolean(parseScriptCommandFile(filePath)));
   if (hasAnyScriptCommand) {
@@ -698,6 +698,6 @@ export function ensureSampleScriptCommand(): {
   return { scriptsDir, scriptPath: targetPath, created: true };
 }
 
-export function getSuperCmdScriptCommandsDirectory(): string {
-  return getSuperCmdScriptsDir();
+export function getDiscovScriptCommandsDirectory(): string {
+  return getDiscovScriptsDir();
 }

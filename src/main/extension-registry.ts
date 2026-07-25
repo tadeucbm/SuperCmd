@@ -168,7 +168,7 @@ async function showGitSetupDialog(
     try {
       const result = await dialog.showMessageBox({
         type: 'warning',
-        buttons: ['Quit SuperCmd', 'Later'],
+        buttons: ['Quit Discov', 'Later'],
         defaultId: 0,
         cancelId: 1,
         noLink: true,
@@ -202,7 +202,7 @@ async function ensureGitInstalledWithBrew(): Promise<void> {
     if (!brewExecutable) {
       await showGitSetupDialog(
         'Git is required to install extensions.',
-        'Homebrew was not found on this Mac.\n\nInstall Homebrew first:\n/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"\n\nThen reopen SuperCmd and try again.'
+        'Homebrew was not found on this Mac.\n\nInstall Homebrew first:\n/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"\n\nThen reopen Discov and try again.'
       );
       throw new Error('Git setup required: Homebrew is not installed.');
     }
@@ -222,16 +222,16 @@ async function ensureGitInstalledWithBrew(): Promise<void> {
     } catch (error) {
       await showGitSetupDialog(
         'Git is required to install extensions.',
-        `Automatic Git install failed.\n\nRun this command in Terminal:\n"${brewExecutable}" install git\n\nThen quit and reopen SuperCmd and try again.`
+        `Automatic Git install failed.\n\nRun this command in Terminal:\n"${brewExecutable}" install git\n\nThen quit and reopen Discov and try again.`
       );
       throw new Error('Git setup required: automatic brew install failed.');
     }
     brewGitInstalled = true;
     await showGitSetupDialog(
       'Git has been installed.',
-      'Please quit and reopen SuperCmd, then try installing extensions again.'
+      'Please quit and reopen Discov, then try installing extensions again.'
     );
-    throw new Error('Git was installed. Restart SuperCmd and retry.');
+    throw new Error('Git was installed. Restart Discov and retry.');
   })();
 
   try {
@@ -313,7 +313,7 @@ async function runGitCommand(cwd: string, args: string, timeoutMs: number): Prom
   }
 
   await ensureGitInstalledWithBrew();
-  throw new Error('Git setup required. Quit and reopen SuperCmd, then try again.');
+  throw new Error('Git setup required. Quit and reopen Discov, then try again.');
 }
 
 function hasNodeModules(extPath: string): boolean {
@@ -358,7 +358,7 @@ function shouldUseNetworkFallback(error: any): boolean {
 
 function githubApiHeaders(): Record<string, string> {
   return {
-    'User-Agent': 'SuperCmd',
+    'User-Agent': 'Discov',
     Accept: 'application/vnd.github+json',
   };
 }
@@ -585,7 +585,7 @@ async function downloadExtensionFromTree(name: string, tmpDir: string): Promise<
         fileUrl,
         {
           headers: {
-            'User-Agent': 'SuperCmd',
+            'User-Agent': 'Discov',
             Accept: 'application/octet-stream',
           },
         },
@@ -733,7 +733,7 @@ function saveCatalogToDisk(catalog: CatalogCache): void {
 async function fetchCatalogFromGitHub(): Promise<CatalogEntry[]> {
   const tmpDir = path.join(
     app.getPath('temp'),
-    `supercmd-catalog-${Date.now()}`
+    `discov-catalog-${Date.now()}`
   );
   const diskCache = loadCatalogFromDisk();
 
@@ -862,7 +862,7 @@ export async function getExtensionScreenshotUrls(name: string): Promise<string[]
     const url = `${GITHUB_API}/extensions/${encodeURIComponent(name)}/metadata`;
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'SuperCmd',
+        'User-Agent': 'Discov',
         Accept: 'application/vnd.github+json',
       },
     });
@@ -1092,7 +1092,7 @@ async function installExtensionFromBundle(
   const backupPath = hadExistingInstall
     ? path.join(getExtensionsDir(), `${name}.backup-${Date.now()}`)
     : '';
-  const tmpDir = path.join(app.getPath('temp'), `supercmd-bundle-${Date.now()}`);
+  const tmpDir = path.join(app.getPath('temp'), `discov-bundle-${Date.now()}`);
 
   try {
     const t0 = Date.now();
@@ -1183,7 +1183,7 @@ async function installExtensionViaAPI(name: string): Promise<boolean> {
   const backupPath = hadExistingInstall
     ? path.join(getExtensionsDir(), `${name}.backup-${Date.now()}`)
     : '';
-  const tmpDir = path.join(app.getPath('temp'), `supercmd-api-install-${Date.now()}`);
+  const tmpDir = path.join(app.getPath('temp'), `discov-api-install-${Date.now()}`);
 
   try {
     const t0 = Date.now();
@@ -1297,7 +1297,7 @@ async function installExtensionViaGit(name: string): Promise<boolean> {
 
   const tmpDir = path.join(
     app.getPath('temp'),
-    `supercmd-install-${Date.now()}`
+    `discov-install-${Date.now()}`
   );
 
   try {

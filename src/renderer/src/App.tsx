@@ -464,8 +464,8 @@ const App: React.FC = () => {
 
 
   const cursorPromptPortalTarget = useDetachedPortalWindow(showCursorPrompt, {
-    name: 'supercmd-prompt-window',
-    title: 'SuperCmd Prompt',
+    name: 'discov-prompt-window',
+    title: 'Discov Prompt',
     width: 500,
     height: 132,
     anchor: 'caret',
@@ -475,8 +475,8 @@ const App: React.FC = () => {
   });
 
   const windowManagerPortalTarget = useDetachedPortalWindow(showWindowManager, {
-    name: 'supercmd-window-manager-window',
-    title: 'SuperCmd Window Manager',
+    name: 'discov-window-manager-window',
+    title: 'Discov Window Manager',
     width: 380,
     height: 276,
     anchor: 'bottom-right',
@@ -565,7 +565,7 @@ const App: React.FC = () => {
       setRootSearchAutocompleteEnabled(settings.rootSearchAutocompleteEnabled !== false);
       setRootSearchRanking(settings.rootSearchRanking || {});
       hydrateWebSearchSettings(settings);
-      const speakToggleHotkey = settings.commandHotkeys?.['system-supercmd-whisper-speak-toggle'] ?? '';
+      const speakToggleHotkey = settings.commandHotkeys?.['system-discov-whisper-speak-toggle'] ?? '';
       setWhisperSpeakToggleLabel(formatShortcutLabel(speakToggleHotkey));
       setConfiguredEdgeTtsVoice(String(settings.ai?.edgeTtsVoice || 'en-US-EricNeural'));
       setConfiguredTtsModel(String(settings.ai?.textToSpeechModel || 'edge-tts'));
@@ -903,7 +903,7 @@ const App: React.FC = () => {
           setShowFileSearch(false);
           setExtensionPreferenceSetup(null);
         } else {
-          // No-view hotkey commands never call showWindow(), so SuperCmd never
+          // No-view hotkey commands never call showWindow(), so Discov never
           // takes focus — the user's active app keeps focus throughout.
           // activateLastFrontmostApp() is intentionally NOT called here: it
           // uses stale lastFrontmostApp data and can activate the wrong app.

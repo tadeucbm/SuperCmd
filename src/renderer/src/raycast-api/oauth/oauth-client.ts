@@ -20,7 +20,7 @@ export class PKCEClientCompat {
     this.providerIcon = options?.providerIcon;
     this.providerId = options?.providerId || this.providerName.toLowerCase().replace(/\s+/g, '-');
     this.description = options?.description;
-    this.extensionName = getOAuthRuntimeDeps().getExtensionContext().extensionName || 'supercmd-extension';
+    this.extensionName = getOAuthRuntimeDeps().getExtensionContext().extensionName || 'discov-extension';
   }
 
   async authorizationRequest(options: any) {

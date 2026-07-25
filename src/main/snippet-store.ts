@@ -321,7 +321,7 @@ export function resolveSnippetPlaceholdersWithCursor(
       const textMatch = trimmed.match(/text\s*=\s*"([^"]*)"/i);
       const urlMatch  = trimmed.match(/url\s*=\s*"([^"]*)"/i);
       if (textMatch && urlMatch) {
-        return `__SUPERCMD_LINK__${textMatch[1]}__SUPERCMD_HREF__${urlMatch[1]}__SUPERCMD_ENDLINK__`;
+        return `__DISCOV_LINK__${textMatch[1]}__DISCOV_HREF__${urlMatch[1]}__DISCOV_ENDLINK__`;
       }
     }
 
@@ -344,7 +344,7 @@ export function resolveSnippetPlaceholders(content: string, dynamicValues?: Reco
 }
 // ─── Rich Text (HTML) rendering ─────────────────────────────────────────────
 
-const LINK_TOKEN_RE = /__SUPERCMD_LINK__(.*?)__SUPERCMD_HREF__(.*?)__SUPERCMD_ENDLINK__/g;
+const LINK_TOKEN_RE = /__DISCOV_LINK__(.*?)__DISCOV_HREF__(.*?)__DISCOV_ENDLINK__/g;
 
 /**
  * Returns true when the resolved snippet content contains at least one
@@ -466,7 +466,7 @@ export async function exportSnippetsToFile(parentWindow?: BrowserWindow): Promis
   const dialogOptions: SaveDialogOptions = {
     title: 'Export Snippets',
     defaultPath: 'snippets.json',
-    filters: [{ name: 'SuperCmd Snippets', extensions: ['json'] }],
+    filters: [{ name: 'Discov Snippets', extensions: ['json'] }],
   };
   const result = parentWindow
     ? await dialog.showSaveDialog(parentWindow, dialogOptions)
@@ -477,7 +477,7 @@ export async function exportSnippetsToFile(parentWindow?: BrowserWindow): Promis
   const all = getAllSnippets();
   const exportData: SnippetExportFile = {
     version: 1,
-    app: 'SuperCmd',
+    app: 'Discov',
     type: 'snippets',
     exportedAt: new Date().toISOString(),
     snippets: all.map((s) => ({
@@ -495,7 +495,7 @@ export async function exportSnippetsToFile(parentWindow?: BrowserWindow): Promis
 export async function importSnippetsFromFile(parentWindow?: BrowserWindow): Promise<{ imported: number; skipped: number }> {
   const dialogOptions: OpenDialogOptions = {
     title: 'Import Snippets',
-    filters: [{ name: 'SuperCmd Snippets', extensions: ['json'] }],
+    filters: [{ name: 'Discov Snippets', extensions: ['json'] }],
     properties: ['openFile'],
   };
   const result = parentWindow
@@ -515,10 +515,10 @@ export async function importSnippetsFromFile(parentWindow?: BrowserWindow): Prom
     // Collect the raw items from whichever format was used
     let rawItems: any[] = [];
     if (parsed.type === 'snippets' && Array.isArray(parsed.snippets)) {
-      // SuperCmd native export: { type: 'snippets', snippets: [...] }
+      // Discov native export: { type: 'snippets', snippets: [...] }
       rawItems = parsed.snippets;
     } else if (Array.isArray(parsed)) {
-      // Plain array — covers both SuperCmd and Raycast exports
+      // Plain array — covers both Discov and Raycast exports
       rawItems = parsed;
     } else {
       return { imported: 0, skipped: 0 };

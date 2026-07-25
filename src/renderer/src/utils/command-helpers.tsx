@@ -3,7 +3,7 @@
  *
  * Pure utility functions and types for the launcher command list.
  * - filterCommands: text search + hidden-command filtering
- * - Icon renderers: renderCommandIcon, renderSuperCmdLogoIcon, getSystemCommandFallbackIcon
+ * - Icon renderers: renderCommandIcon, renderDiscovLogoIcon, getSystemCommandFallbackIcon
  * - Display helpers: getCommandDisplayTitle, getCategoryLabel, getCommandAccessoryLabel, formatShortcutLabel, renderShortcutLabel
  * - Voice utilities: buildReadVoiceOptions, getVoiceLanguageCode, getFallbackVoiceLabel
  * - parseIntervalToMs: converts interval strings like "1m", "12h" to milliseconds
@@ -15,7 +15,7 @@
 import React from 'react';
 import { Search, Power, Settings, Puzzle, Sparkles, FileText, Mic, Volume2, Brain, TerminalSquare, RefreshCw, LayoutGrid, Lock, Trash2, Store, Globe, PanelTop, Bookmark, Clock, Menu } from 'lucide-react';
 import type { CommandInfo, EdgeTtsVoice } from '../../types/electron';
-import supercmdLogo from '../../../../supercmd.svg';
+import discovLogo from '../../../../discov.svg';
 import IconCalendar from '../icons/Calendar';
 import IconCamera from '../icons/Camera';
 import IconClipboard from '../icons/Clipboard';
@@ -436,12 +436,12 @@ export function formatShortcutLabel(shortcut: string): string {
   return formatShortcutForDisplay(shortcut).replace(/ \+ /g, ' ');
 }
 
-export function isSuperCmdAppTitle(title: string): boolean {
+export function isDiscovAppTitle(title: string): boolean {
   const key = String(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
-  return key === 'supercmd' || key === 'supercmd';
+  return key === 'discov' || key === 'discov';
 }
 
-export function isSuperCmdSystemCommand(commandId: string): boolean {
+export function isDiscovSystemCommand(commandId: string): boolean {
   return (
     commandId === 'system-open-settings' ||
     commandId === 'system-open-ai-settings' ||
@@ -509,10 +509,10 @@ export function buildReadVoiceOptions(
   return options;
 }
 
-export function renderSuperCmdLogoIcon(): React.ReactNode {
+export function renderDiscovLogoIcon(): React.ReactNode {
   return (
     <img
-      src={supercmdLogo}
+      src={discovLogo}
       alt=""
       className="w-5 h-5 object-contain"
       draggable={false}
@@ -521,14 +521,14 @@ export function renderSuperCmdLogoIcon(): React.ReactNode {
 }
 
 export function getCommandDisplayTitle(command: CommandInfo, t?: Translator): string {
-  if (command.category === 'app' && isSuperCmdAppTitle(command.title)) return 'SuperCmd';
+  if (command.category === 'app' && isDiscovAppTitle(command.title)) return 'Discov';
   if (t) {
     switch (String(command.id || '').trim()) {
       case 'system-open-settings':
         return t('settings.title');
-      case 'system-supercmd-whisper':
+      case 'system-discov-whisper':
         return t('whisper.title');
-      case 'system-supercmd-speak':
+      case 'system-discov-speak':
         return t('read.title');
       default:
         break;
@@ -997,8 +997,8 @@ function renderWindowManagementCommandIcon(commandId: string): React.ReactNode |
 }
 
 export function renderCommandIcon(command: CommandInfo): React.ReactNode {
-  if (command.category === 'app' && isSuperCmdAppTitle(command.title)) {
-    return renderSuperCmdLogoIcon();
+  if (command.category === 'app' && isDiscovAppTitle(command.title)) {
+    return renderDiscovLogoIcon();
   }
   if (command.iconDataUrl) {
     return (
@@ -1106,8 +1106,8 @@ function renderBrowserFaviconIcon(faviconUrl: string, kind?: CommandInfo['browse
 }
 
 export function getSystemCommandFallbackIcon(commandId: string): React.ReactNode {
-  if (isSuperCmdSystemCommand(commandId)) {
-    return renderSuperCmdLogoIcon();
+  if (isDiscovSystemCommand(commandId)) {
+    return renderDiscovLogoIcon();
   }
 
   if (commandId === 'system-cursor-prompt') {
@@ -1306,7 +1306,7 @@ export function getSystemCommandFallbackIcon(commandId: string): React.ReactNode
     );
   }
 
-  if (commandId === 'system-supercmd-whisper') {
+  if (commandId === 'system-discov-whisper') {
     return (
       <div className="w-5 h-5 rounded bg-sky-500/20 flex items-center justify-center">
         <Mic className="w-3 h-3 text-sky-300" />
@@ -1322,7 +1322,7 @@ export function getSystemCommandFallbackIcon(commandId: string): React.ReactNode
     );
   }
 
-  if (commandId === 'system-supercmd-speak') {
+  if (commandId === 'system-discov-speak') {
     return (
       <div className="w-5 h-5 rounded bg-indigo-500/20 flex items-center justify-center">
         <Volume2 className="w-3 h-3 text-indigo-200" />

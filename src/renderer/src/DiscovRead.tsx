@@ -11,7 +11,7 @@ interface SpeakStatus {
   wordIndex?: number;
 }
 
-interface SuperCmdReadProps {
+interface DiscovReadProps {
   status: SpeakStatus;
   voice: string;
   voiceOptions: Array<{ value: string; label: string }>;
@@ -32,7 +32,7 @@ const SPEED_PRESETS = [
   { value: '+30%', label: '1.3x' },
 ];
 
-const SuperCmdRead: React.FC<SuperCmdReadProps> = ({
+const DiscovRead: React.FC<DiscovReadProps> = ({
   status,
   voice,
   voiceOptions,
@@ -207,4 +207,4 @@ const SuperCmdRead: React.FC<SuperCmdReadProps> = ({
   );
 };
 
-export default SuperCmdRead;
+export default DiscovRead;

@@ -1,13 +1,13 @@
-# SuperCmd - Open Source Raycast Alternative
+# Discov - Open Source Raycast Alternative
 
 ## Project Overview
 
-SuperCmd is an open-source alternative to Raycast, designed to provide a similar launcher experience while maintaining full compatibility with Raycast extensions. The project aims to achieve feature parity with Raycast while remaining open-source and community-driven.
+Discov is an open-source alternative to Raycast, designed to provide a similar launcher experience while maintaining full compatibility with Raycast extensions. The project aims to achieve feature parity with Raycast while remaining open-source and community-driven.
 
 ### Core Principles
 
 1. **Extension Compatibility**: The app must be compatible with existing Raycast extensions without requiring modifications to extension code
-2. **Runtime Control**: All changes and enhancements must be implemented in SuperCmd itself, not in extensions, since we cannot control extension code at runtime
+2. **Runtime Control**: All changes and enhancements must be implemented in Discov itself, not in extensions, since we cannot control extension code at runtime
 3. **API Parity**: Keep APIs in sync with `@raycast/api` and track implementation status against the official Raycast API
 4. **Progressive Enhancement**: Gradually implement all Raycast APIs to achieve full parity
 
@@ -228,7 +228,7 @@ Locales live in `src/renderer/src/i18n/locales/` — `en.json` is the source of 
 Checklist when touching `en.json`:
 
 1. Add the new key(s) to `en.json` with the English copy.
-2. Mirror the exact same key path into every other locale file with a proper translation — don't leave English values in a non-English locale, and don't machine-translate blindly for user-facing product names / brand terms (e.g. "SuperCmd", "Whisper", model names).
+2. Mirror the exact same key path into every other locale file with a proper translation — don't leave English values in a non-English locale, and don't machine-translate blindly for user-facing product names / brand terms (e.g. "Discov", "Whisper", model names).
 3. If you remove a key from `en.json`, remove it from every other locale too.
 4. Preserve interpolation variables verbatim (`{count}`, `{name}`, `{version}`, `{plural}`, etc.) — translations must keep the same placeholders.
 5. Verify structural parity after edits — all locales must have the same set of keys as `en.json`. A quick node check:
@@ -257,7 +257,7 @@ Checklist when touching `en.json`:
 
 ## Extension Registry Integration
 
-SuperCmd integrates with the Raycast extension registry to:
+Discov integrates with the Raycast extension registry to:
 
 1. **Browse Extensions**: Access the full catalog of Raycast extensions
 2. **Install Extensions**: Download and install extensions from the registry
@@ -268,7 +268,7 @@ Extensions are stored locally and executed through the compatibility shim.
 
 ## AI Integration
 
-SuperCmd supports AI features through:
+Discov supports AI features through:
 
 - **Ollama**: Local AI models via Ollama
 - **OpenAI**: Cloud-based AI via OpenAI API

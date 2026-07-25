@@ -59,7 +59,7 @@ async function loadBridge(t) {
 }
 
 function callbackUrl(state, code = state) {
-  const url = new URL('supercmd://oauth/callback');
+  const url = new URL('discov://oauth/callback');
   url.searchParams.set('state', state);
   url.searchParams.set('code', code);
   return url.toString();

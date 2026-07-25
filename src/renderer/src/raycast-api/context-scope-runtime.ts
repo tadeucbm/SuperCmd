@@ -38,7 +38,7 @@ let deps: ContextDeps = {
     extensionIconDataUrl: '',
     commandName: '',
     assetsPath: '',
-    supportPath: '/tmp/supercmd',
+    supportPath: '/tmp/discov',
     owner: '',
     preferences: {},
     preferenceDefinitions: [],

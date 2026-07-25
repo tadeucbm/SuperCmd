@@ -12,7 +12,10 @@ import { loadSettings } from './settings-store';
 
 import type { CatalogEntry } from './extension-registry';
 
-// const DEFAULT_API_URL = 'http://localhost:3001'; //'https://api.supercmd.com';
+// TODO(rebrand): still the upstream SuperCmd backend. Extension discovery,
+// search and download all depend on it, so it is kept pointing at
+// api.supercmd.sh until a Discov backend exists. Override at runtime with the
+// `extensionApiUrl` setting.
 const DEFAULT_API_URL = 'https://api.supercmd.sh';
 const REQUEST_TIMEOUT = 30_000;
 
@@ -46,7 +49,7 @@ function jsonRequest<T>(
       port: fullUrl.port || (isHttps ? 443 : 80),
       path: fullUrl.pathname + fullUrl.search,
       headers: {
-        'User-Agent': 'SuperCmd',
+        'User-Agent': 'Discov',
         Accept: 'application/json',
         ...(payload
           ? {
