@@ -260,6 +260,7 @@ npm run check:i18n       # Check internationalization strings
 | Window management doesn't work | Grant **Accessibility** permission — `window-adjust.swift` checks `AXIsProcessTrusted()` |
 | Extensions fail to install | Verify Homebrew is installed (`brew --version`) — SuperCmd needs brew-resolved `git` to clone extensions |
 | `node-gyp` build errors | Check Node.js version (`node -v`) — requires 22+. Try deleting `node_modules` and re-running `npm install` |
+| `Electron failed to install correctly` | Electron's own zip extraction stalls silently on newer Node (seen on 26.x). `npm install` repairs it automatically; run `npm run ensure:electron-binary` if it persists |
 | Apple Silicon (M1/M2/M3) issues | Ensure you're running the arm64 version of Node.js, not the x64 version via Rosetta |
 | Native features missing after `npm run dev` | Run `npm run build:native` first — the dev script doesn't compile Swift binaries |
 | Snippet expansion not working | Grant **Accessibility** permission; snippet-expander uses `CGEventPost` for keystroke injection |
