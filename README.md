@@ -247,8 +247,14 @@ npm run build:renderer   # Build renderer with Vite
 npm run build:native     # Compile Swift helpers and native modules
 npm run package          # Build and package app with electron-builder
 npm run package:unsigned # Build unsigned package for local testing
+npm run reinstall        # Replace /Applications/SuperCmd.app with a fresh local build
 npm run check:i18n       # Check internationalization strings
 ```
+
+`npm run reinstall` quits the running copy, removes the old bundle, resets its
+macOS privacy permissions, rebuilds, installs into `/Applications` and relaunches.
+User data is preserved unless `--wipe-data` is passed; see
+`npm run reinstall -- --help` for all flags, and `--dry-run` to preview.
 
 ### Troubleshooting
 

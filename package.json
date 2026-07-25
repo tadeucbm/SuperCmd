@@ -21,6 +21,7 @@
     "ensure:electron-binary": "node scripts/ensure-electron-binary.mjs",
     "postinstall": "node scripts/ensure-cross-arch-esbuild.mjs && node scripts/ensure-electron-binary.mjs && electron-builder install-app-deps",
     "start": "electron .",
+    "reinstall": "bash scripts/reinstall-app.sh",
     "package": "cross-env NODE_ENV=production npm run build && electron-builder",
     "package:unsigned": "cross-env NODE_ENV=production CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && electron-builder --mac dmg -c.mac.identity=null -c.mac.notarize=false"
   },
