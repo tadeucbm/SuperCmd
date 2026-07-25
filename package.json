@@ -48,7 +48,6 @@
     "electron-updater": "^6.7.3",
     "esbuild": "^0.19.12",
     "lucide-react": "^0.312.0",
-    "node-edge-tts": "^1.2.10",
     "node-window-manager": "^2.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -75,7 +74,6 @@
       "dist/main/window-manager-worker.js",
       "node_modules/esbuild/**",
       "node_modules/@esbuild/**",
-      "node_modules/node-edge-tts/**",
       "node_modules/node-window-manager/**",
       "node_modules/electron-liquid-glass/**"
     ],
@@ -118,9 +116,7 @@
       "extendInfo": {
         "NSCameraUsageDescription": "Discov needs camera access to show and capture camera previews.",
         "NSCalendarsUsageDescription": "Discov needs calendar access to show your schedule and upcoming events.",
-        "NSCalendarsFullAccessUsageDescription": "Discov needs full calendar access to show your schedule and upcoming events.",
-        "NSMicrophoneUsageDescription": "Discov needs microphone access for Whisper dictation.",
-        "NSSpeechRecognitionUsageDescription": "Discov uses speech recognition for native Whisper dictation."
+        "NSCalendarsFullAccessUsageDescription": "Discov needs full calendar access to show your schedule and upcoming events."
       }
     },
     "linux": {

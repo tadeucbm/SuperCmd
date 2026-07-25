@@ -191,33 +191,13 @@
       "title": "Configuracion de IA",
       "loading": "Cargando configuracion de IA...",
       "saved": "Guardado",
-      "languages": {
-        "arabic": "Arabic",
-        "chineseMandarin": "Chinese (Mandarin)",
-        "englishUs": "English (US)",
-        "englishUk": "English (UK)",
-        "frenchCanada": "French (Canada)",
-        "frenchFrance": "French (France)",
-        "german": "German",
-        "hindi": "Hindi",
-        "italian": "Italian",
-        "japanese": "Japanese",
-        "korean": "Korean",
-        "polish": "Polaco",
-        "portugueseBrazil": "Portuguese (Brazil)",
-        "russian": "Russian",
-        "spanishMexico": "Spanish (Mexico)",
-        "spanishSpain": "Spanish (Spain)"
-      },
       "enableAI": {
         "title": "Activar IA",
         "description": "Interruptor principal para las funciones de IA."
       },
       "tabs": {
         "apiKeys": "Claves API",
-        "llm": "LLM",
-        "whisper": "Discov Whisper",
-        "speak": "Discov Read"
+        "llm": "LLM"
       },
       "apiKeys": {
         "openai": {
@@ -231,10 +211,6 @@
         "gemini": {
           "label": "Clave API de Gemini (Google)",
           "placeholder": "AIza..."
-        },
-        "elevenlabs": {
-          "label": "Clave API de ElevenLabs",
-          "placeholder": "xi-..."
         },
         "supermemory": {
           "title": "Supermemory",
@@ -344,159 +320,6 @@
         "defaultModel": {
           "label": "Modelo predeterminado",
           "auto": "Auto (predeterminado del proveedor)"
-        }
-      },
-      "whisper": {
-        "enableWhisper": {
-          "title": "Activar Discov Whisper",
-          "description": "Activar o desactivar las funciones de voz a texto."
-        },
-        "title": "Discov Whisper",
-        "description": "Voz a texto y limpieza de transcripciones.",
-        "model": {
-          "label": "Modelo",
-          "native": "Nativo (predeterminado)",
-          "openaiGpt4o": "OpenAI GPT-4o Transcribe",
-          "openaiWhisper": "OpenAI Whisper-1",
-          "elevenlabsScribeV1": "ElevenLabs Scribe v1",
-          "elevenlabsScribeV2": "ElevenLabs Scribe v2"
-        },
-        "modelOptions": {
-          "whispercpp": "Discov Whisper (Default)",
-          "parakeet": "Parakeet v3 (Best and fastest, 25+ European languages)",
-          "qwen3": "Qwen3 ASR (30+ languages including Chinese, Japanese, Korean, Thai, Vietnamese, Hindi)",
-          "native": "Apple Speech Recognition",
-          "openaiGpt4o": "OpenAI GPT-4o Transcribe",
-          "openaiWhisper": "OpenAI Whisper-1",
-          "elevenlabsScribeV1": "ElevenLabs Scribe v1",
-          "elevenlabsScribeV2": "ElevenLabs Scribe v2"
-        },
-        "openaiWarning": "Se ha seleccionado OpenAI Whisper. Anade la clave API de OpenAI en API Keys.",
-        "elevenlabsWarning": "Se ha seleccionado ElevenLabs STT. {action} la clave API de ElevenLabs en API Keys.",
-        "elevenlabsReady": "Se ha seleccionado ElevenLabs STT. La transcripcion en la nube usara tu clave de ElevenLabs.",
-        "recognitionLanguage": "Recognition Language",
-        "vocabulary": {
-          "label": "Vocabulario personalizado",
-          "placeholder": "Kotlin, Electron, Raycast, Discov…",
-          "hint": "Opcional. Enumera palabras poco comunes, nombres o términos técnicos (separados por comas o saltos de línea) para orientar el reconocimiento hacia la ortografía correcta.",
-          "tokenWarning": "Unos {count} tokens. Whisper solo usa aproximadamente los primeros 224; las palabras que excedan ese límite se ignoran."
-        },
-        "providerInfo": {
-          "parakeet": "Offline on-device transcription via Parakeet TDT v3. Runs on Apple Neural Engine. Requires model warmup on first use. Download the model below before using dictation.",
-          "qwen3": "Offline on-device transcription via Qwen3 ASR. Supports 30+ languages, requires macOS 15+, and warms up on first use.",
-          "whispercpp": "Offline on-device transcription via Whisper.cpp. Download the default ggml base model below before using dictation.",
-          "native": "Uses Apple Speech Recognition instead of Discov Whisper."
-        },
-        "hotkeys": {
-          "title": "Atajos de Whisper",
-          "startStop": "Iniciar/detener dictado",
-          "custom": "Personalizado…",
-          "holdToTalkHint": "Seleccione una tecla push-to-talk. Mantenga para grabar, suelte para escribir. Use Personalizado para grabar cualquier combinacion."
-        },
-        "autoClose": {
-          "title": "Auto-Close After Dictation",
-          "description": "Automatically close the whisper bar when dictation finishes."
-        },
-        "smoothOutput": {
-          "title": "Suavizar salida",
-          "description": "Limpia muletillas y autocorrecciones."
-        },
-        "smoothingModel": {
-          "label": "Modelo de suavizado",
-          "useDefault": "Usar modelo generico predeterminado",
-          "hint": "Usa los modelos de tu proveedor actual."
-        },
-        "downloadCards": {
-          "modelDownloadFailed": "Model download failed.",
-          "actions": {
-            "downloaded": "Model Downloaded",
-            "downloading": "Downloading...",
-            "download": "Download Model"
-          },
-          "parakeet": {
-            "title": "Parakeet TDT v3",
-            "description": "Multilingual on-device transcription. Runs on Apple Neural Engine.",
-            "ready": "Downloaded. Parakeet v3 is ready to use offline.",
-            "downloading": "Downloading Parakeet v3 models",
-            "notDownloaded": "Model not downloaded yet. Download it now to use Parakeet dictation."
-          },
-          "qwen3": {
-            "title": "Qwen3 ASR",
-            "description": "30-language on-device transcription. Requires macOS 15+.",
-            "ready": "Downloaded. Qwen3 ASR is ready to use offline.",
-            "downloading": "Downloading Qwen3 ASR models",
-            "notDownloaded": "Model not downloaded yet. Download the ~900 MB int8 model to use Qwen3 dictation."
-          },
-          "whispercpp": {
-            "title": "Discov Whisper",
-            "description": "Download the ggml base model once to enable local dictation.",
-            "ready": "Downloaded. Discov Whisper is ready to use offline.",
-            "downloading": "Downloading Discov Whisper",
-            "notDownloaded": "Model not downloaded yet. Download it now to use Discov Whisper dictation."
-          }
-        }
-      },
-      "speak": {
-        "enableRead": {
-          "title": "Activar Discov Read",
-          "description": "Activar o desactivar las funciones de texto a voz."
-        },
-        "title": "Discov Read",
-        "description": "Leer en voz alta el texto seleccionado.",
-        "provider": {
-          "label": "Proveedor de voz",
-          "edgeTTS": "Edge TTS (predeterminado)",
-          "elevenlabsMultilingual": "ElevenLabs Multilingual v2",
-          "elevenlabsFlash": "ElevenLabs Flash v2.5",
-          "elevenlabsTurbo": "ElevenLabs Turbo v2.5",
-          "elevenlabsV3": "ElevenLabs v3 (Alpha)"
-        },
-        "edgeTTS": {
-          "voice": "Voz de Edge TTS",
-          "fetching": "Obteniendo la lista completa de voces...",
-          "language": {
-            "label": "Idioma"
-          },
-          "gender": {
-            "label": "Genero de voz",
-            "female": "Femenino",
-            "male": "Masculino"
-          },
-          "voiceLabel": {
-            "label": "Voz"
-          },
-          "playSample": {
-            "idle": "Reproducir voz de muestra",
-            "playing": "Reproduciendo muestra..."
-          }
-        },
-        "elevenlabs": {
-          "model": {
-            "label": "Modelo de ElevenLabs"
-          },
-          "voice": {
-            "label": "Voz de ElevenLabs",
-            "fetching": "Obteniendo tus voces...",
-            "fetchFailed": "Failed to fetch voices.",
-            "builtIn": "Voces integradas",
-            "premade": "Voces predefinidas adicionales",
-            "custom": "Tus voces personalizadas (clonadas/generadas)",
-            "professional": "Clones de voz profesionales",
-            "available": "{count} resultado{plural} de voz personalizada en tu cuenta de ElevenLabs"
-          },
-          "playSample": {
-            "idle": "Reproducir voz de muestra",
-            "playing": "Reproduciendo muestra..."
-          },
-          "storageHint": "Discov guarda esto como {value}.",
-          "apiKeyWarning": "Anade la clave API de ElevenLabs en API Keys."
-        },
-        "notes": {
-          "title": "Notas",
-          "whisperDefault": "Whisper usa por defecto Discov Whisper con un modelo local ggml base.",
-          "speakDefault": "La salida de voz predeterminada es Edge TTS con seleccion de voz masculina/femenina por idioma.",
-          "englishVoice": "Las voces en ingles se limitan intencionadamente a las variantes de EE. UU. y Reino Unido.",
-          "elevenlabsVoices": "Las voces personalizadas de ElevenLabs (clonadas/generadas) apareceran automaticamente cuando tu clave API este configurada."
         }
       },
       "hotkeyUpdated": "Atajo actualizado.",
@@ -1180,21 +1003,7 @@
       },
       "ai": {
         "title": "AI Integration",
-        "description": "Chat with AI, use speech-to-text, and let AI help you write and edit."
-      }
-    },
-    "whisper": {
-      "quick": {
-        "title": "Whisper Quick Onboarding",
-        "subtitle": "Hold to record, release to type",
-        "instructions": {
-          "before": "Press and hold ",
-          "after": " while speaking. Release it to process and type at your current cursor."
-        },
-        "practiceTitle": "Practice paragraph",
-        "practicePlaceholder": "Today I reviewed the roadmap and prioritized the top three tasks for this week. Please draft a short summary and share it with the team before lunch.",
-        "practiceHint": "Practice in this editor: hold hotkey, speak these two sentences, release, and verify the output.",
-        "footerHint": "Whisper stays near the bottom when active."
+        "description": "Chatea con la IA y deja que te ayude a escribir y editar."
       }
     },
     "voice": {
@@ -1203,147 +1012,29 @@
         "coreFeatures": "Core Features",
         "hotkeySetup": "Hotkey Setup",
         "permissions": "Permissions",
-        "dictationMode": "Dictation Mode",
-        "readMode": "Read Mode",
         "finalCheck": "Final Check"
-      },
-      "featureCards": {
-        "whisper": {
-          "title": "Whisper",
-          "description": "Hold to speak and release to type."
-        },
-        "read": {
-          "title": "Read",
-          "description": "Read selected text with natural voice."
-        }
       },
       "permissions": {
         "inputMonitoringTitle": "Input Monitoring",
-        "inputMonitoringDescription": "Required for Fn hold-to-talk detection and other global key monitoring in Whisper mode.",
-        "speechRecognitionTitle": "Speech Recognition",
-        "speechRecognitionDescription": "Optional. Needed only if you switch Whisper to the Apple Speech Recognition fallback.",
-        "microphoneTitle": "Microphone",
-        "microphoneDescription": "Required for Discov Whisper Dictation."
+        "inputMonitoringDescription": "Necesario para la monitorización global de teclas, incluidos los atajos de comandos basados en Fn."
       },
       "permissionNotes": {
-        "blocked": "{target} access is blocked. Enable Discov in System Settings, then return.",
-        "promptFailed": "Could not trigger the permission prompt. Open System Settings -> Privacy & Security, enable Discov, then press request again.",
-        "notShown": "Permission prompt did not appear. Open Whisper once and press this again.",
         "homeFolder": "Select your Home folder when prompted, then enable Discov under Files and Folders if needed.",
         "inputMonitoring": "In Input Monitoring, click \"+\" at the bottom left and add Discov from your Applications folder."
-      },
-      "dictation": {
-        "title": "Dictation Mode",
-        "howToTest": "How to test",
-        "howToTestHint": "Hold key, read sample, release to insert.",
-        "holdKeyUpdated": "Hold key updated",
-        "language": "Dictation language",
-        "sampleTitle": "Messages sample",
-        "sampleHint": "Hold your key and read the message above:",
-        "placeholder": "Dictated text appears here...",
-        "footerHint": "Discov Whisper uses a local ggml base model by default. Apple Speech Recognition remains available as a fallback in Settings.",
-        "models": {
-          "downloadFailed": "Model download failed. Retry now or use Settings -> AI -> Discov Whisper.",
-          "actions": {
-            "downloaded": "Downloaded",
-            "downloading": "Downloading...",
-            "download": "Download Model"
-          },
-          "parakeet": {
-            "title": "Parakeet TDT v3",
-            "ready": "Download complete. Parakeet v3 dictation is ready.",
-            "downloadingLead": "Downloading models, just a moment.",
-            "downloading": "Downloading Parakeet v3 CoreML models",
-            "notDownloaded": "Discov starts downloading Parakeet v3 models on this step so dictation is ready before first use."
-          },
-          "whispercpp": {
-            "title": "Discov Whisper",
-            "ready": "Download complete. Discov Whisper dictation is ready.",
-            "downloadingLead": "Downloading model, just a moment.",
-            "downloading": "Downloading the ~300 MB ggml base model",
-            "notDownloaded": "Discov starts downloading the Discov Whisper model on this step so dictation is ready before first use."
-          },
-          "cloud": {
-            "title": "Cloud Transcription",
-            "description": "Using cloud-based transcription. No model download needed."
-          }
-        },
-        "sampleText": "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness."
-      },
-      "read": {
-        "badge": "Classic Literature",
-        "readTime": "1 min read",
-        "articleTitle": "Pride and Prejudice",
-        "instructions": {
-          "before": "Select the text above then press",
-          "after": "to hear it read aloud."
-        },
-        "sampleText": "Voice-first interfaces are having a moment. After years of being dismissed as gimmicks, a new wave of tools is making it genuinely faster to speak than type - with transcription that keeps up, smart corrections, and shortcut keys that slot into existing workflows without disruption."
       },
       "final": {
         "title": "Final step: start Discov from anywhere",
         "description": "Press your global shortcut now to start Discov from any app.",
         "nextStep": "Next step: Setup Hotkeys for AI Prompt and Memory from Discov Settings -> Extensions to start using AI anywhere."
       },
-      "setupDescription": "We will configure launcher hotkeys, privacy permissions, and whisper mode in one pass.",
-      "setupSummary": "Whisper dictation and Read mode practice",
+      "setupDescription": "Configuraremos los atajos del lanzador y los permisos de privacidad en un solo paso.",
       "summary": {
         "title": "What gets configured now:",
         "hotkey": "1. Launcher hotkey",
-        "permissions": "2. Accessibility, Input Monitoring, Speech Recognition, Microphone"
+        "permissions": "2. Accesibilidad, Monitorización de entrada"
       },
-      "setupTitle": "One command surface for launch, ask, dictate, and read."
+      "setupTitle": "Una sola superficie de comandos para abrir, buscar y preguntar."
     }
-  },
-  "whisper": {
-    "title": "Discov Whisper",
-    "description": "Speech-to-text made simple",
-    "start": "Start Speaking",
-    "stop": "Stop Speaking",
-    "listening": "Escuchando...",
-    "processing": "Procesando...",
-    "placeholder": "Speak now...",
-    "close": "Close whisper",
-    "coachmark": {
-      "holdToTalk": "Whisper sits here. Hold {shortcut} to talk, release to type.",
-      "warmingUp": "First-time setup - Warming up models..."
-    },
-    "status": {
-      "idle": "Press start to begin speaking.",
-      "apiError": "Whisper API error.",
-      "nativeFallback": "Whisper model is Apple Speech Recognition. Press start to use the Apple fallback.",
-      "transcriptionFailedLocal": "Discov Whisper transcription failed.",
-      "transcriptionFailed": "Whisper transcription failed.",
-      "microphonePermissionRequired": "Microphone permission required.",
-      "microphonePermissionCheckFailed": "Microphone permission check failed.",
-      "microphoneAccessDenied": "Microphone access denied.",
-      "startingMicrophone": "Starting microphone...",
-      "loadingModels": "Loading Whisper models...",
-      "nativeRecognizerStartFailed": "Speech recognition failed to start.",
-      "finishing": "Finishing transcription...",
-      "listeningReleaseToProcess": "Listening. Release to process.",
-      "listeningPressAgainToFinish": "Listening. Press again to finish.",
-      "recordingFailed": "Recording failed.",
-      "speechRecognitionError": "Speech recognition error."
-    },
-    "errors": {
-      "typeIntoActiveApp": "Could not type into the active app.",
-      "enableMicrophonePermission": "Enable Discov in System Settings -> Privacy & Security -> Microphone, then retry.",
-      "allowMicrophonePermission": "Allow microphone permission to use Discov Whisper.",
-      "microphoneUnavailable": "Could not access microphone. Check System Settings -> Privacy & Security -> Microphone.",
-      "nativeRecognizerStartFailed": "Failed to start native speech recognizer.",
-      "liveTypingRetry": "Live typing fell behind. Try again.",
-      "modelNotReady": "Model is still warming up. Try again in a moment.",
-      "recordingFailed": "Could not start audio recording."
-    }
-  },
-  "read": {
-    "title": "Leer texto",
-    "description": "Text-to-speech for any selected text",
-    "start": "Start Reading",
-    "stop": "Detener",
-    "reading": "Reading...",
-    "noText": "No text selected"
   },
   "camera": {
     "title": "Cámara",

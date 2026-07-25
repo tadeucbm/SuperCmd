@@ -19,8 +19,6 @@ const SENSITIVE_AI_KEYS = [
   'openaiApiKey',
   'anthropicApiKey',
   'geminiApiKey',
-  'elevenlabsApiKey',
-  'mistralApiKey',
   'supermemoryApiKey',
   'lmStudioApiKey',
   'openaiCompatibleApiKey',
@@ -41,25 +39,14 @@ export interface AISettings {
   openaiApiKey: string;
   anthropicApiKey: string;
   geminiApiKey: string;
-  elevenlabsApiKey: string;
-  mistralApiKey: string;
   supermemoryApiKey: string;
   supermemoryClient: string;
   supermemoryBaseUrl: string;
   supermemoryLocalMode: boolean;
   ollamaBaseUrl: string;
   defaultModel: string;
-  speechCorrectionModel: string;
-  speechToTextModel: string;
-  speechLanguage: string;
-  speechVocabulary: string;
-  textToSpeechModel: string;
-  edgeTtsVoice: string;
-  speechCorrectionEnabled: boolean;
   enabled: boolean;
   llmEnabled: boolean;
-  whisperEnabled: boolean;
-  readEnabled: boolean;
   openaiCompatibleAppendV1: boolean;
   openaiCompatibleBaseUrl: string;
   openaiCompatibleApiKey: string;
@@ -226,7 +213,6 @@ export interface AppSettings {
   recentCommands: string[];
   recentCommandLaunchCounts: Record<string, number>;
   hasSeenOnboarding: boolean;
-  hasSeenWhisperOnboarding: boolean;
   fileSearchProtectedRootsEnabled: boolean;
   disableFileSearchResults: boolean;
   showMenuBarIcon: boolean;
@@ -300,25 +286,14 @@ const DEFAULT_AI_SETTINGS: AISettings = {
   openaiApiKey: '',
   anthropicApiKey: '',
   geminiApiKey: '',
-  elevenlabsApiKey: '',
-  mistralApiKey: '',
   supermemoryApiKey: '',
   supermemoryClient: '',
   supermemoryBaseUrl: 'https://api.supermemory.ai',
   supermemoryLocalMode: false,
   ollamaBaseUrl: 'http://localhost:11434',
   defaultModel: '',
-  speechCorrectionModel: '',
-  speechToTextModel: 'whispercpp',
-  speechLanguage: 'en-US',
-  speechVocabulary: '',
-  textToSpeechModel: 'edge-tts',
-  edgeTtsVoice: 'en-US-EricNeural',
-  speechCorrectionEnabled: false,
   enabled: true,
   llmEnabled: true,
-  whisperEnabled: true,
-  readEnabled: true,
   openaiCompatibleAppendV1: true,
   openaiCompatibleBaseUrl: '',
   openaiCompatibleApiKey: '',
@@ -344,9 +319,6 @@ const DEFAULT_SETTINGS: AppSettings = {
   customExtensionFolders: [],
   scriptCommandFolders: [],
   commandHotkeys: {
-    'system-discov-whisper': 'Command+Shift+W',
-    'system-discov-whisper-speak-toggle': 'Fn',
-    'system-discov-speak': 'Command+Shift+S',
     'system-window-management-left': 'Control+Alt+Left',
     'system-window-management-right': 'Control+Alt+Right',
     'system-window-management-top': 'Control+Alt+Up',
@@ -372,7 +344,6 @@ const DEFAULT_SETTINGS: AppSettings = {
   recentCommands: [],
   recentCommandLaunchCounts: {},
   hasSeenOnboarding: false,
-  hasSeenWhisperOnboarding: false,
   fileSearchProtectedRootsEnabled: false,
   disableFileSearchResults: false,
   showMenuBarIcon: true,
@@ -1207,25 +1178,18 @@ export function loadSettings(): AppSettings {
     const parsed: any = { ...parsedSync, ...parsedLocal };
     const parsedHotkeys = { ...(parsed.commandHotkeys || {}) };
     const parsedAliases = { ...(parsed.commandAliases || {}) } as Record<string, any>;
-    const hasParsedHotkey = (key: string) => Object.prototype.hasOwnProperty.call(parsedHotkeys, key);
-    if (!hasParsedHotkey('system-discov-whisper-speak-toggle')) {
-      if (parsedHotkeys['system-discov-whisper-start']) {
-        parsedHotkeys['system-discov-whisper-speak-toggle'] = parsedHotkeys['system-discov-whisper-start'];
-      } else if (parsedHotkeys['system-discov-whisper-stop']) {
-        parsedHotkeys['system-discov-whisper-speak-toggle'] = parsedHotkeys['system-discov-whisper-stop'];
-      }
+    // Whisper/Read were removed; drop their persisted hotkeys so they are
+    // never registered again for users upgrading from an older build.
+    for (const legacyHotkeyId of [
+      'system-discov-whisper',
+      'system-discov-whisper-toggle',
+      'system-discov-whisper-start',
+      'system-discov-whisper-stop',
+      'system-discov-whisper-speak-toggle',
+      'system-discov-speak',
+    ]) {
+      delete parsedHotkeys[legacyHotkeyId];
     }
-    if (hasParsedHotkey('system-discov-whisper-toggle')) {
-      if (!hasParsedHotkey('system-discov-whisper-start')) {
-        parsedHotkeys['system-discov-whisper-start'] = parsedHotkeys['system-discov-whisper-toggle'];
-      }
-      if (!hasParsedHotkey('system-discov-whisper')) {
-        parsedHotkeys['system-discov-whisper'] = parsedHotkeys['system-discov-whisper-toggle'];
-      }
-    }
-    delete parsedHotkeys['system-discov-whisper-toggle'];
-    delete parsedHotkeys['system-discov-whisper-start'];
-    delete parsedHotkeys['system-discov-whisper-stop'];
     const normalizedAliases: Record<string, string> = {};
     for (const [commandId, aliasValue] of Object.entries(parsedAliases)) {
       const normalizedCommandId = String(commandId || '').trim();
@@ -1270,8 +1234,6 @@ export function loadSettings(): AppSettings {
       // Existing users with older settings should not be forced into onboarding.
       hasSeenOnboarding:
         parsed.hasSeenOnboarding ?? true,
-      hasSeenWhisperOnboarding:
-        parsed.hasSeenWhisperOnboarding ?? false,
       fileSearchProtectedRootsEnabled:
         parsed.fileSearchProtectedRootsEnabled ?? DEFAULT_SETTINGS.fileSearchProtectedRootsEnabled,
       disableFileSearchResults: normalizeBoolean(

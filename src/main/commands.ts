@@ -1328,18 +1328,6 @@ async function discoverAndBuildCommands(): Promise<CommandInfo[]> {
       category: 'system',
     },
     {
-      id: 'system-discov-whisper',
-      title: 'Discov Whisper',
-      keywords: ['whisper', 'speech', 'voice', 'dictation', 'transcribe', 'overlay', 'discov'],
-      category: 'system',
-    },
-    {
-      id: 'system-discov-speak',
-      title: 'Discov Read',
-      keywords: ['speak', 'tts', 'read', 'selected text', 'edge-tts', 'speechify', 'jarvis', 'discov'],
-      category: 'system',
-    },
-    {
       id: 'system-menu-item-search',
       title: 'Search Menu Items',
       keywords: ['menu', 'search', 'menu item', 'commands', 'actions', 'accessibility', 'app menu', 'toolbar'],

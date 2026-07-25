@@ -874,7 +874,7 @@ export function useLauncherCommandModel({
       const describe = (c: any, idx: number) => c
         ? { score: Math.round(c.finalScore), matchKind: c.matchKind, organic: c.isOrganicBrowserResult, rankIdx: idx }
         : 'NOT_A_CANDIDATE';
-      (window as any).electron?.whisperDebugLog?.('SC-RANK2', `q="${searchQuery}"`, {
+      console.log(`[SC-RANK2] q="${searchQuery}"`, {
         cmdCands: commandCandidates.length,
         browserCands: browserCandidates.length,
         rootTotal: rootRankedCandidates.length,
@@ -888,7 +888,7 @@ export function useLauncherCommandModel({
         RESULTS: queryResultCommands.map((c) => c.title),
       });
     } catch (e) {
-      (window as any).electron?.whisperDebugLog?.('SC-RANK2', 'ERR', String(e));
+      console.log('[SC-RANK2] ERR', String(e));
     }
   }, [hasSearchQuery, searchQuery, rootRankedCandidates, queryResultCommands, commandCandidates, browserCandidates]);
 

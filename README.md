@@ -4,21 +4,21 @@
 </p>
 
 <h1 align="center"><b>Discov</b></h1>
-<h4 align="center">Raycast + Wispr Flow + Speechify + Memory + AI</h4>
+<h4 align="center">Raycast + Memory + AI</h4>
 
 <p align="center">
   <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/electron-40-blue.svg" alt="Electron"></a>
   <a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
 </p>
 
-<p align="center">Open-source launcher for macOS with Raycast-compatible extensions, voice workflows, and AI-native actions.</p>
+<p align="center">Open-source launcher for macOS with Raycast-compatible extensions and AI-native actions.</p>
 </div>
 
 ![Discov Screenshot](./assets/discov.png)
 
-Open-source launcher for macOS: **Raycast + Wispr Flow + Speechify + Memory + AI** in one app.
+Open-source launcher for macOS: **Raycast + Memory + AI** in one app.
 
-Discov gives you Raycast-style extension workflows, hold-to-speak dictation, natural text-to-speech, AI actions backed by configurable providers and memory, notes, canvas, clipboard history, snippet expansion, and window tiling — all from a single keyboard shortcut.
+Discov gives you Raycast-style extension workflows, AI actions backed by configurable providers and memory, notes, canvas, clipboard history, snippet expansion, and window tiling — all from a single keyboard shortcut.
 
 > **Discov is a fork of [SuperCmd](https://github.com/SuperCmdLabs/SuperCmd)** by
 > [Shobhit Bhosure](https://github.com/shobhit99), used under the MIT License.
@@ -26,7 +26,7 @@ Discov gives you Raycast-style extension workflows, hold-to-speak dictation, nat
 
 ## What It Is
 
-Discov is an Electron + React launcher that focuses on Raycast extension compatibility while remaining community-driven and open source. It ships a full `@raycast/api` and `@raycast/utils` compatibility shim so existing Raycast extensions work without modification. For anything that requires tight system integration — hotkeys, window management, speech recognition, clipboard, snippet injection — it drops into Swift and Objective-C to talk directly to macOS frameworks (ApplicationServices, EventKit, AVFoundation, Carbon) for native speed and reliability.
+Discov is an Electron + React launcher that focuses on Raycast extension compatibility while remaining community-driven and open source. It ships a full `@raycast/api` and `@raycast/utils` compatibility shim so existing Raycast extensions work without modification. For anything that requires tight system integration — hotkeys, window management, clipboard, snippet injection — it drops into Swift and Objective-C to talk directly to macOS frameworks (ApplicationServices, EventKit, Carbon) for native speed and reliability.
 
 ## Key Features
 
@@ -34,8 +34,6 @@ Discov is an Electron + React launcher that focuses on Raycast extension compati
 - **Raycast backup import** — import encrypted `.rayconfig` backups with settings, hotkeys, extensions, scripts, quicklinks, snippets, notes, and extension prefs
 - **AI cursor prompt** — inline AI suggestions at your cursor position across any app
 - **AI chat** — chat with configurable providers (OpenAI / Anthropic / Ollama / Gemini / OpenAI-compatible)
-- **Hold-to-speak dictation** — Wispr Flow-style voice input; hold hotkey, speak, release to type (Whisper, Parakeet, or native macOS STT)
-- **Read aloud** — Speechify-style TTS for selected text (Edge TTS or ElevenLabs)
 - **Clipboard history** — full clipboard manager with Cmd+1–9 quick-paste shortcuts
 - **Snippet expansion** — create and trigger text snippets with keyboard shortcuts
 - **Quick links** — bookmark URLs and launch them from the launcher
@@ -93,16 +91,12 @@ dist/            Build output
 | `calendar-events` | EventKit calendar integration |
 | `color-picker` | System color picker |
 | `get-selected-text` | Extract selected text from frontmost app |
-| `hotkey-hold-monitor` | Hold-to-speak hotkey detection |
+| `hotkey-hold-monitor` | Hold-style hotkey detection (Fn / modifier keys) |
 | `hyper-key-monitor` | Caps Lock → Hyper Key remapping |
 | `input-monitoring-request` | Request Input Monitoring permission |
-| `microphone-access` | Microphone permission checks |
 | `snippet-expander` | Keyboard-triggered snippet expansion |
-| `speech-recognizer` | macOS native speech recognition (STT) |
-| `whisper-transcriber` | OpenAI Whisper STT integration |
 | `window-adjust` | Window tiling and resizing (ApplicationServices) |
 | `fast-paste-addon/` | Node.js native module for fast clipboard paste (Cmd+1–9) |
-| `parakeet-transcriber/` | Swift package — on-device STT via swift-transformers |
 
 ## Install
 
@@ -130,8 +124,7 @@ Discov needs the following permissions. The app will prompt you on first use, or
 | Permission | Why | Required for |
 |---|---|---|
 | **Accessibility** | Window management, keystroke injection | Window tiling, snippet expansion |
-| **Input Monitoring** | Global hotkey detection (hold-to-speak, launcher shortcut, hyper key) | Core launcher functionality |
-| **Microphone** | Voice dictation (speech-to-text) | Optional — only if using voice features |
+| **Input Monitoring** | Global hotkey detection (launcher shortcut, hyper key, Fn hotkeys) | Core launcher functionality |
 | **Automation (AppleScript)** | Selected text capture, system automation | Extension actions |
 | **Calendars** | Reading today's events | Optional — only if using schedule feature |
 
@@ -269,7 +262,6 @@ User data is preserved unless `--wipe-data` is passed; see
 | Apple Silicon (M1/M2/M3) issues | Ensure you're running the arm64 version of Node.js, not the x64 version via Rosetta |
 | Native features missing after `npm run dev` | Run `npm run build:native` first — the dev script doesn't compile Swift binaries |
 | Snippet expansion not working | Grant **Accessibility** permission; snippet-expander uses `CGEventPost` for keystroke injection |
-| Whisper/Parakeet STT not working | Grant **Microphone** permission in System Settings → Privacy & Security |
 
 ## AI + Memory Setup
 
@@ -290,16 +282,6 @@ Configure everything from the app UI:
 | Google Gemini | `geminiApiKey` | Gemini 1.5 Pro, Flash, etc. |
 | Ollama | `ollamaBaseUrl` | Default `http://localhost:11434` — local models |
 | OpenAI-compatible | `openaiCompatibleBaseUrl` + `openaiCompatibleApiKey` | Any OpenAI-compatible endpoint |
-
-### Speech / voice keys
-
-| Feature | Setting |
-|---|---|
-| ElevenLabs TTS | `elevenlabsApiKey` |
-| Edge TTS (built-in) | No key required |
-| Native macOS STT | No key required |
-| Whisper STT | Runs locally — no key required |
-| Parakeet STT | Runs locally via swift-transformers — no key required |
 
 ### Memory keys
 
@@ -332,12 +314,9 @@ Key fields:
     "anthropicApiKey": "",
     "geminiApiKey": "",
     "ollamaBaseUrl": "http://localhost:11434",
-    "elevenlabsApiKey": "",
     "supermemoryApiKey": "",
     "supermemoryBaseUrl": "https://api.supermemory.ai",
-    "defaultModel": "openai-gpt-4o-mini",
-    "speechToTextModel": "native",
-    "textToSpeechModel": "edge-tts"
+    "defaultModel": "openai-gpt-4o-mini"
   }
 }
 ```
@@ -346,7 +325,6 @@ OAuth tokens are stored separately in `~/Library/Application Support/Discov/oaut
 
 ### Optional environment variable fallbacks
 
-- `ELEVENLABS_API_KEY`
 - `SUPERMEMORY_API_KEY`
 - `SUPERMEMORY_CLIENT`
 - `SUPERMEMORY_BASE_URL`
@@ -359,7 +337,6 @@ Discov is open-source, so you can audit exactly what it does. The short version:
 - **Telemetry**: none. Discov sends no analytics events.
 - **AI prompts**: sent directly from your device to your configured provider (OpenAI / Anthropic / Gemini / Ollama).
 - **Extension install/uninstall**: reports extension name + an anonymous random machine ID to `api.supercmd.sh` for download counts.
-- **Voice data**: STT runs fully on-device (Whisper, Parakeet, native macOS) — audio never leaves your machine.
 
 See **[SECURITY.md](./SECURITY.md)** for the full breakdown.
 

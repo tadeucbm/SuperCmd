@@ -45,9 +45,7 @@ launcher/
 │   │       │   ├── useAiChat.ts              # AI chat mode state + streaming
 │   │       │   ├── useCursorPrompt.ts        # Inline AI cursor prompt state + streaming
 │   │       │   ├── useMenuBarExtensions.ts   # Menu-bar extension lifecycle
-│   │       │   ├── useBackgroundRefresh.ts   # Interval-based background refresh for extensions/scripts
-│   │       │   ├── useSpeakManager.ts        # TTS (Read) overlay state + portal
-│   │       │   └── useWhisperManager.ts      # Whisper STT overlay state + portals
+│   │       │   └── useBackgroundRefresh.ts   # Interval-based background refresh for extensions/scripts
 │   │       ├── views/                 # Full-screen view components (pure UI, state from hooks)
 │   │       │   ├── AiChatView.tsx                  # Full-screen AI chat panel
 │   │       │   ├── CursorPromptView.tsx             # Inline/portal AI cursor prompt UI
@@ -228,7 +226,7 @@ Locales live in `src/renderer/src/i18n/locales/` — `en.json` is the source of 
 Checklist when touching `en.json`:
 
 1. Add the new key(s) to `en.json` with the English copy.
-2. Mirror the exact same key path into every other locale file with a proper translation — don't leave English values in a non-English locale, and don't machine-translate blindly for user-facing product names / brand terms (e.g. "Discov", "Whisper", model names).
+2. Mirror the exact same key path into every other locale file with a proper translation — don't leave English values in a non-English locale, and don't machine-translate blindly for user-facing product names / brand terms (e.g. "Discov", model names).
 3. If you remove a key from `en.json`, remove it from every other locale too.
 4. Preserve interpolation variables verbatim (`{count}`, `{name}`, `{version}`, `{plural}`, etc.) — translations must keep the same placeholders.
 5. Verify structural parity after edits — all locales must have the same set of keys as `en.json`. A quick node check:

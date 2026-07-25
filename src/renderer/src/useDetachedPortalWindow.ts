@@ -259,12 +259,9 @@ export function useDetachedPortalWindow(
     }
     const portalRoot = ensurePortalRoot(childDoc);
     setPortalTarget(portalRoot);
-    const shouldFocusChild = options.name !== 'discov-whisper-window';
-    if (shouldFocusChild) {
-      try {
-        child.focus();
-      } catch {}
-    }
+    try {
+      child.focus();
+    } catch {}
 
     const handleBeforeUnload = () => {
       childWindowRef.current = null;

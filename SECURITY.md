@@ -1,6 +1,6 @@
 # Security & Privacy
 
-Discov occupies a central role in your workflow — it sees your keystrokes, clipboard, voice input, and AI prompts. This document explains exactly what the app monitors and what data leaves your device.
+Discov occupies a central role in your workflow — it sees your keystrokes, clipboard, and AI prompts. This document explains exactly what the app monitors and what data leaves your device.
 
 ---
 
@@ -45,8 +45,6 @@ This is used for install/download count metrics on the extension catalog.
 | `https://api.supercmd.sh` | Extension name | When browsing the extension catalog | Extension store usage |
 | Your configured AI provider (OpenAI / Anthropic / Gemini / custom) | Your prompt + system prompt | When you use AI features | AI settings |
 | `http://localhost:11434` | Your prompt | When using Ollama | AI settings (local) |
-| `https://api.elevenlabs.io` | Text to be spoken | When using ElevenLabs TTS | TTS settings |
-| Edge TTS (`speech.platform.bing.com`) | Text to be spoken | When using built-in Edge TTS | TTS settings |
 | `https://api.supermemory.ai` | Memory snippets (up to ~2,400 chars) | When Supermemory integration is enabled | Memory settings |
 | GitHub Releases API | App version string | On auto-update check | Built-in updater |
 | Extension CDN / S3 | Binary download | On extension install | Extension store usage |
@@ -83,15 +81,11 @@ Set your AI provider to **Ollama** with a local model. All AI processing stays o
 
 Leave `supermemoryApiKey` blank. Discov will fall back to `local-memories.json` on your device.
 
-### Use Native STT
-
-Set `speechToTextModel` to `native` in AI settings. This uses Apple's on-device speech recognizer.
-
 ---
 
 ## API Key & Secret Storage
 
-API keys (OpenAI, Anthropic, Gemini, ElevenLabs, Supermemory) are stored in **plain text** in:
+API keys (OpenAI, Anthropic, Gemini, Supermemory) are stored in **plain text** in:
 
 ```
 ~/Library/Application Support/Discov/settings.json
