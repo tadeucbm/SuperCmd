@@ -855,9 +855,6 @@
       },
       "profileAction": "个人资料"
     },
-    "compact": {
-      "showMore": "显示更多"
-    },
     "status": {
       "discoveringApps": "正在发现应用...",
       "noMatchingResults": "没有匹配的结果",

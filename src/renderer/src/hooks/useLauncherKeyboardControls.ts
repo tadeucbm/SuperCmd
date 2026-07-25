@@ -127,7 +127,6 @@ export function useLauncherKeyboardControls(
   handleLauncherSearchBlur: () => void;
   handleLauncherInputChange: (value: string) => void;
   copyCalculatorResult: () => void;
-  showCompactLauncher: () => void;
   handleInlineExtensionArgumentChange: (argumentName: string, value: string) => void;
   handleInlineQuickLinkDynamicValueChange: (fieldKey: string, value: string) => void;
 } {
@@ -619,11 +618,6 @@ export function useLauncherKeyboardControls(
     window.electron.hideWindow();
   }, [calcResult]);
 
-  const showCompactLauncher = useCallback(() => {
-    setIsCompactCollapsed(false);
-    window.electron.resizeLauncherWindow(true);
-  }, [setIsCompactCollapsed]);
-
   const handleInlineExtensionArgumentChange = useCallback((argumentName: string, value: string) => {
     if (!selectedCommand) return;
     updateInlineExtensionArgumentValue(selectedCommand, argumentName, value);
@@ -639,7 +633,6 @@ export function useLauncherKeyboardControls(
     handleLauncherSearchBlur,
     handleLauncherInputChange,
     copyCalculatorResult,
-    showCompactLauncher,
     handleInlineExtensionArgumentChange,
     handleInlineQuickLinkDynamicValueChange,
   };

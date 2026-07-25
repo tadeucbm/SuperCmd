@@ -855,9 +855,6 @@
       },
       "profileAction": "Profile"
     },
-    "compact": {
-      "showMore": "Show More"
-    },
     "status": {
       "discoveringApps": "Discovering apps...",
       "noMatchingResults": "No matching results",

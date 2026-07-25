@@ -837,9 +837,6 @@
       },
       "profileAction": "Profilo"
     },
-    "compact": {
-      "showMore": "Mostra di più"
-    },
     "status": {
       "discoveringApps": "Ricerca delle app...",
       "noMatchingResults": "Nessun risultato corrispondente",

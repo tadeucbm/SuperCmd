@@ -7,7 +7,6 @@ import type { LauncherContextMenuState } from '../components/LauncherContextMenu
 import type { LauncherCommandSection } from '../components/LauncherCommandList';
 import LauncherViewShell from '../components/LauncherViewShell';
 import LauncherSearchHeader from '../components/LauncherSearchHeader';
-import LauncherCompactShowMoreRow from '../components/LauncherCompactShowMoreRow';
 import LauncherCommandList from '../components/LauncherCommandList';
 import LauncherFooter from '../components/LauncherFooter';
 import QuickLinkDynamicPromptOverlay from '../components/QuickLinkDynamicPromptOverlay';
@@ -58,8 +57,6 @@ type LauncherMainViewProps = {
 
   launcherViewMode: 'expanded' | 'compact';
   isCompactCollapsed: boolean;
-  logoSrc: string;
-  onShowCompactLauncher: () => void;
 
   listRef: React.RefObject<HTMLDivElement>;
   itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
@@ -152,8 +149,6 @@ const LauncherMainView: React.FC<LauncherMainViewProps> = ({
   onClearSearch,
   launcherViewMode,
   isCompactCollapsed,
-  logoSrc,
-  onShowCompactLauncher,
   listRef,
   itemRefs,
   isLoading,
@@ -239,14 +234,6 @@ const LauncherMainView: React.FC<LauncherMainViewProps> = ({
         onClearSearch={onClearSearch}
         t={t}
       />
-
-      {launcherViewMode === 'compact' && isCompactCollapsed && (
-        <LauncherCompactShowMoreRow
-          logoSrc={logoSrc}
-          onShowMore={onShowCompactLauncher}
-          t={t}
-        />
-      )}
 
       <LauncherCommandList
         listRef={listRef}

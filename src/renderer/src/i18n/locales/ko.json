@@ -855,9 +855,6 @@
       },
       "profileAction": "프로필"
     },
-    "compact": {
-      "showMore": "더 보기"
-    },
     "status": {
       "discoveringApps": "앱 검색 중...",
       "noMatchingResults": "일치하는 결과가 없습니다",

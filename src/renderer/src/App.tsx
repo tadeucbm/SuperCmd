@@ -6,7 +6,6 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, useDeferredValue } from 'react';
-import supercmdLogo from '../../../supercmd.png';
 import type {
   CommandInfo,
   ExtensionBundle,
@@ -2360,7 +2359,6 @@ const App: React.FC = () => {
     handleLauncherSearchBlur,
     handleLauncherInputChange,
     copyCalculatorResult,
-    showCompactLauncher,
     handleInlineExtensionArgumentChange,
     handleInlineQuickLinkDynamicValueChange,
   } = useLauncherKeyboardControls({
@@ -2989,8 +2987,6 @@ const App: React.FC = () => {
 
       launcherViewMode={launcherViewMode}
       isCompactCollapsed={isCompactCollapsed}
-      logoSrc={supercmdLogo}
-      onShowCompactLauncher={showCompactLauncher}
 
       listRef={listRef}
       itemRefs={itemRefs}

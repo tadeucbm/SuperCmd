@@ -855,9 +855,6 @@
       },
       "profileAction": "Профиль"
     },
-    "compact": {
-      "showMore": "Show More"
-    },
     "status": {
       "discoveringApps": "Поиск приложений...",
       "noMatchingResults": "Ничего не найдено",

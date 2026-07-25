@@ -855,9 +855,6 @@
       },
       "profileAction": "個人檔案"
     },
-    "compact": {
-      "showMore": "顯示更多"
-    },
     "status": {
       "discoveringApps": "正在探索應用程式...",
       "noMatchingResults": "沒有符合的結果",

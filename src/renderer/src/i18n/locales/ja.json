@@ -855,9 +855,6 @@
       },
       "profileAction": "プロファイル"
     },
-    "compact": {
-      "showMore": "もっと見る"
-    },
     "status": {
       "discoveringApps": "アプリを検出中...",
       "noMatchingResults": "一致する結果がありません",
