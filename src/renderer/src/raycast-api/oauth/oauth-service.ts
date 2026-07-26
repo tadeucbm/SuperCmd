@@ -4,10 +4,8 @@
  */
 
 import { PKCEClientCompat } from './oauth-client';
-import { ensureOAuthCallbackBridge, waitForOAuthCallback } from './oauth-bridge';
 import { OAuthServiceCore } from './oauth-service-core';
 import type { OAuthServiceOptions } from './oauth-types';
-import { getOAuthRuntimeDeps } from './runtime-config';
 
 type OAuthFactoryOptions = {
   clientId?: string;
@@ -17,27 +15,17 @@ type OAuthFactoryOptions = {
   onAuthorize?: OAuthServiceOptions['onAuthorize'];
 };
 
-function createServerAuthorize(url: string, providerName: string): () => Promise<string> {
-  return async () => {
-    ensureOAuthCallbackBridge();
-    await getOAuthRuntimeDeps().open(url);
-    const callback = await waitForOAuthCallback('');
-    if (callback.error) {
-      throw new Error(callback.errorDescription || callback.error);
-    }
-    const token = callback.accessToken || callback.code;
-    if (!token) {
-      throw new Error(`${providerName} authorization did not return a valid token.`);
-    }
-    return token;
-  };
-}
-
-// TODO(rebrand): the default clientIds and the api.supercmd.sh authorize URLs
-// below are upstream SuperCmd OAuth registrations. They are deliberately left
-// unrenamed — the proxy and the providers validate these exact values, so
-// changing them breaks extension sign-in. Replace them together with the
-// backend once Discov has its own OAuth apps.
+// Every provider below authorizes directly against the provider itself. Linear,
+// Spotify and Jira previously routed through an upstream SuperCmd proxy that
+// held the client secret, completed the exchange server-side and handed back a
+// finished access token — which put the user's live token through third-party
+// infrastructure. That path is gone.
+//
+// The consequence is that these factories ship no default clientId: the ones
+// they used to carry were upstream's registrations and only ever resolved
+// inside the proxy. Callers supply their own via `clientId`, the user enters
+// one in the auth gate, or — simplest for providers that require a client
+// secret — `personalAccessToken` skips OAuth entirely.
 export class OAuthService extends OAuthServiceCore {
   static linear(options: OAuthFactoryOptions): OAuthService {
     const client = new PKCEClientCompat({
@@ -49,12 +37,12 @@ export class OAuthService extends OAuthServiceCore {
 
     return new OAuthService({
       client,
-      clientId: options.clientId || '_supercmd_linear',
+      clientId: options.clientId,
       scope: options.scope,
-      authorizeUrl: 'https://api.supercmd.sh/auth/linear/authorize',
+      authorizeUrl: 'https://linear.app/oauth/authorize',
       tokenUrl: 'https://api.linear.app/oauth/token',
       personalAccessToken: options.personalAccessToken,
-      authorize: options.authorize || createServerAuthorize('https://api.supercmd.sh/auth/linear/authorize', 'Linear'),
+      authorize: options.authorize,
       onAuthorize: options.onAuthorize,
     });
   }
@@ -69,12 +57,12 @@ export class OAuthService extends OAuthServiceCore {
 
     return new OAuthService({
       client,
-      clientId: options.clientId || '_supercmd_spotify',
+      clientId: options.clientId,
       scope: options.scope,
-      authorizeUrl: 'https://api.supercmd.sh/auth/spotify/authorize',
+      authorizeUrl: 'https://accounts.spotify.com/authorize',
       tokenUrl: 'https://accounts.spotify.com/api/token',
       personalAccessToken: options.personalAccessToken,
-      authorize: options.authorize || createServerAuthorize('https://api.supercmd.sh/auth/spotify/authorize', 'Spotify'),
+      authorize: options.authorize,
       onAuthorize: options.onAuthorize,
     });
   }
@@ -139,12 +127,12 @@ export class OAuthService extends OAuthServiceCore {
     const client = new PKCEClientCompat({ providerId: 'jira', providerName: 'Jira', providerIcon: 'jira-icon.png', description: 'Connect your Jira account' });
     return new OAuthService({
       client,
-      clientId: options.clientId || '_supercmd_jira',
+      clientId: options.clientId,
       scope: options.scope,
-      authorizeUrl: 'https://api.supercmd.sh/auth/jira/authorize',
+      authorizeUrl: 'https://auth.atlassian.com/authorize',
       tokenUrl: 'https://auth.atlassian.com/oauth/token',
       personalAccessToken: options.personalAccessToken,
-      authorize: options.authorize || createServerAuthorize('https://api.supercmd.sh/auth/jira/authorize', 'Jira'),
+      authorize: options.authorize,
       onAuthorize: options.onAuthorize,
     });
   }

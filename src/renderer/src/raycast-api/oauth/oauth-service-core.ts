@@ -35,33 +35,6 @@ export class OAuthServiceCore {
     localStorage.setItem(key, trimmed);
   }
 
-  // TODO(rebrand): these managed authorize endpoints are still the upstream
-  // SuperCmd OAuth proxy. Extensions signing in with Spotify/Linear depend on
-  // it, so it stays until Discov hosts its own.
-  protected getManagedAuthorizeUrl(): string | null {
-    const providerId = String(this.options.client?.providerId || '').trim().toLowerCase();
-    const providerName = String(this.options.client?.providerName || '').trim().toLowerCase();
-    const configuredAuthorizeUrl = String(this.options.authorizeUrl || '').trim().toLowerCase();
-
-    if (
-      providerId === 'spotify' ||
-      providerName === 'spotify' ||
-      configuredAuthorizeUrl.includes('accounts.spotify.com/authorize')
-    ) {
-      return 'https://api.supercmd.sh/auth/spotify/authorize';
-    }
-
-    if (
-      providerId === 'linear' ||
-      providerName === 'linear' ||
-      configuredAuthorizeUrl.includes('api.linear.app/oauth/authorize')
-    ) {
-      return 'https://api.supercmd.sh/auth/linear/authorize';
-    }
-
-    return null;
-  }
-
   protected async exchangeAuthorizationCode(params: {
     code: string;
     codeVerifier: string;
@@ -122,9 +95,6 @@ export class OAuthServiceCore {
   }
 
   async getAuthorizationUrl(): Promise<string | null> {
-    const managedAuthorizeUrl = this.getManagedAuthorizeUrl();
-    if (managedAuthorizeUrl) return managedAuthorizeUrl;
-
     if (!this.options.authorizeUrl || !this.options.scope) return null;
 
     const clientId = this.getConfiguredClientId();
@@ -171,27 +141,6 @@ export class OAuthServiceCore {
           accessToken: token,
           scope: this.options.scope || '',
           tokenType: 'Bearer',
-          obtainedAt: new Date().toISOString(),
-        };
-        await this.options.client?.setTokens?.(tokenSet);
-        await Promise.resolve(this.onAuthorize?.({ token, type: 'oauth' }));
-        return true;
-      }
-
-      const managedAuthorizeUrl = this.getManagedAuthorizeUrl();
-      if (managedAuthorizeUrl) {
-        ensureOAuthCallbackBridge();
-        await getOAuthRuntimeDeps().open(managedAuthorizeUrl);
-        const callback = await waitForOAuthCallback('');
-        if (callback.error) throw new Error(callback.errorDescription || callback.error);
-
-        const token = callback.accessToken || callback.code;
-        if (!token) throw new Error('Authorization did not return a valid token.');
-
-        const tokenSet = {
-          accessToken: token,
-          scope: this.options.scope || '',
-          tokenType: callback.tokenType || 'Bearer',
           obtainedAt: new Date().toISOString(),
         };
         await this.options.client?.setTokens?.(tokenSet);
