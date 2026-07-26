@@ -60,8 +60,10 @@ import {
   getExtensionScreenshotUrls,
   getInstalledExtensionNames,
   installExtension,
+  removeLegacyMachineId,
   uninstallExtension,
 } from './extension-registry';
+import { assertHostAllowed, installUpstreamHostBlocker } from './blocked-hosts';
 import {
   deleteAiChatConversation,
   getAiChatSnapshot,
@@ -75,11 +77,6 @@ import {
   setExtensionPreferenceValue,
   setExtensionPreferences,
 } from './extension-preferences-store';
-import {
-  searchExtensions,
-  getPopularExtensions,
-  getExtensionDetails,
-} from './extension-api';
 import { getExtensionBundle, buildAllCommands, discoverInstalledExtensionCommands, getInstalledExtensionsSettingsSchema } from './extension-runner';
 import {
   getRendererCrashState,
@@ -8444,10 +8441,16 @@ async function installCanvasLib(sender: any): Promise<void> {
       return;
     }
 
-    // Production: download the pre-built bundle from S3
-    // TODO(rebrand): upstream SuperCmd bucket, kept so Canvas keeps working
-    // until the bundle is republished under a Discov-owned bucket.
-    const bundleUrl = 'https://supercmd-extensions.s3.amazonaws.com/canvas/excalidraw-bundle.tgz';
+    // Production: download the pre-built bundle from a self-hosted URL.
+    // There is no default host — build it locally with
+    // `canvas-app/build-and-upload.sh` and point `canvasBundleUrl` at it.
+    const bundleUrl = String(loadSettings().canvasBundleUrl || '').trim();
+    if (!bundleUrl) {
+      throw new Error(
+        'No Canvas bundle URL configured. Build the bundle with canvas-app/build-and-upload.sh and set `canvasBundleUrl` in settings.'
+      );
+    }
+    assertHostAllowed(bundleUrl);
     const response = await net.fetch(bundleUrl);
 
     if (!response.ok) {
@@ -9538,6 +9541,8 @@ protocol.registerSchemesAsPrivileged([
 app.whenReady().then(async () => {
   app.setAsDefaultProtocolClient('discov');
   scrubInternalClipboardProbe('app startup');
+  removeLegacyMachineId();
+  installUpstreamHostBlocker();
   // Warm the worker so the first window-management action does not race spawn.
   setTimeout(() => { ensureWindowManagerWorker(); }, 0);
 
@@ -12071,55 +12076,6 @@ return appURL's |path|() as text`,
     }
   );
 
-  ipcMain.handle(
-    'search-extensions',
-    async (_event: any, query: string, options?: { category?: string; limit?: number; offset?: number }) => {
-      try {
-        return await searchExtensions(query, options);
-      } catch (err: any) {
-        console.warn('search-extensions API failed, falling back to local catalog filter:', err?.message);
-        // Fallback: filter the cached catalog locally
-        const catalog = await getCatalog();
-        const q = (query || '').toLowerCase();
-        const filtered = catalog.filter(
-          (e) =>
-            e.name.toLowerCase().includes(q) ||
-            e.title.toLowerCase().includes(q) ||
-            e.description.toLowerCase().includes(q) ||
-            e.author.toLowerCase().includes(q)
-        );
-        const limit = options?.limit ?? 50;
-        const offset = options?.offset ?? 0;
-        return { results: filtered.slice(offset, offset + limit), total: filtered.length };
-      }
-    }
-  );
-
-  ipcMain.handle(
-    'get-popular-extensions',
-    async (_event: any, limit?: number) => {
-      try {
-        return await getPopularExtensions(limit);
-      } catch (err: any) {
-        console.warn('get-popular-extensions API failed, returning empty:', err?.message);
-        return [];
-      }
-    }
-  );
-
-  ipcMain.handle(
-    'get-extension-details',
-    async (_event: any, name: string) => {
-      try {
-        return await getExtensionDetails(name);
-      } catch (err: any) {
-        console.warn('get-extension-details API failed, falling back to catalog:', err?.message);
-        // Fallback: find in cached catalog
-        const catalog = await getCatalog();
-        return catalog.find((e) => e.name === name) ?? null;
-      }
-    }
-  );
 
   // ─── IPC: Clipboard Manager ─────────────────────────────────────
 

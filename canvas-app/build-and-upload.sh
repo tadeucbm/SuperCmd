@@ -6,13 +6,13 @@
 # Prerequisites:
 #   - Node.js installed
 #   - AWS CLI configured (aws configure)
-#   - S3_EXTENSIONS_BUCKET env var set, or defaults to supercmd-extensions
+#   - S3_EXTENSIONS_BUCKET env var set to your own bucket (required)
 #
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-S3_BUCKET="${S3_EXTENSIONS_BUCKET:-supercmd-extensions}"
+S3_BUCKET="${S3_EXTENSIONS_BUCKET:?Set S3_EXTENSIONS_BUCKET to your own bucket. There is no default: Discov publishes nothing to upstream SuperCmd infrastructure.}"
 
 echo "==> Installing dependencies..."
 cd "$SCRIPT_DIR"

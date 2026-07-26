@@ -1,31 +1,39 @@
 /**
  * Extension API Client
  *
- * Talks to the supercmd-backend for extension discovery, search,
- * and download. Replaces direct git/GitHub interactions as the
- * primary path; git sparse-checkout is kept as a fallback only.
+ * Optional client for a self-hosted extension backend (discovery + pre-built
+ * bundle download). There is no default endpoint: unless the user sets
+ * `extensionApiUrl`, every function here is inert and extension-registry
+ * routes discovery and installs through GitHub instead.
  */
 
 import * as https from 'https';
 import * as http from 'http';
 import { loadSettings } from './settings-store';
+import { isBlockedUpstreamUrl } from './blocked-hosts';
 
 import type { CatalogEntry } from './extension-registry';
 
-// TODO(rebrand): still the upstream SuperCmd backend. Extension discovery,
-// search and download all depend on it, so it is kept pointing at
-// api.supercmd.sh until a Discov backend exists. Override at runtime with the
-// `extensionApiUrl` setting.
-const DEFAULT_API_URL = 'https://api.supercmd.sh';
 const REQUEST_TIMEOUT = 30_000;
 
 function getApiBaseUrl(): string {
   try {
-    const settings = loadSettings();
-    return (settings as any).extensionApiUrl || DEFAULT_API_URL;
+    const configured = String(loadSettings().extensionApiUrl || '').trim();
+    // Refuse upstream hosts even if one is pasted into the setting by hand.
+    if (!configured || isBlockedUpstreamUrl(configured)) return '';
+    return configured;
   } catch {
-    return DEFAULT_API_URL;
+    return '';
   }
+}
+
+/**
+ * True when the user has configured their own extension backend. Callers must
+ * check this before using the functions below — without it there is no
+ * endpoint to talk to and every request fails.
+ */
+export function isExtensionApiConfigured(): boolean {
+  return getApiBaseUrl().length > 0;
 }
 
 /** Minimal JSON fetch using Node built-in http(s). */
@@ -36,6 +44,10 @@ function jsonRequest<T>(
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     const baseUrl = getApiBaseUrl();
+    if (!baseUrl) {
+      reject(new Error('No extension API configured (set `extensionApiUrl`).'));
+      return;
+    }
     const fullUrl = new URL(urlPath, baseUrl);
 
     const isHttps = fullUrl.protocol === 'https:';
@@ -124,105 +136,6 @@ export async function fetchCatalogFromAPI(): Promise<CatalogEntry[]> {
   }));
 }
 
-/** Search extensions via the backend API. */
-export async function searchExtensions(
-  query: string,
-  options?: { category?: string; limit?: number; offset?: number },
-): Promise<{ results: CatalogEntry[]; total: number }> {
-  const params = new URLSearchParams({ q: query });
-  if (options?.category) params.set('category', options.category);
-  if (options?.limit) params.set('limit', String(options.limit));
-  if (options?.offset) params.set('offset', String(options.offset));
-
-  const data = await jsonRequest<{
-    results: any[];
-    total: number;
-  }>('GET', `/extensions/search?${params.toString()}`);
-
-  return {
-    total: data.total,
-    results: data.results.map((entry) => ({
-      name: entry.name ?? '',
-      title: entry.title ?? '',
-      description: entry.description ?? '',
-      author: entry.author ?? '',
-      contributors: entry.contributors ?? [],
-      icon: entry.icon ?? '',
-      iconUrl: entry.iconUrl ?? entry.icon_url ?? '',
-      screenshotUrls: entry.screenshotUrls ?? entry.screenshot_urls ?? [],
-      categories: entry.categories ?? [],
-      platforms: entry.platforms ?? [],
-      commands: (entry.commands ?? []).map((cmd: any) => ({
-        name: cmd.name ?? '',
-        title: cmd.title ?? '',
-        description: cmd.description ?? '',
-      })),
-      installCount: entry.installCount ?? entry.install_count ?? 0,
-    })),
-  };
-}
-
-/** Get popular extensions from the backend. */
-export async function getPopularExtensions(
-  limit = 20,
-): Promise<CatalogEntry[]> {
-  const data = await jsonRequest<any[]>(
-    'GET',
-    `/extensions/popular?limit=${limit}`,
-  );
-
-  return data.map((entry) => ({
-    name: entry.name ?? '',
-    title: entry.title ?? '',
-    description: entry.description ?? '',
-    author: entry.author ?? '',
-    contributors: entry.contributors ?? [],
-    icon: entry.icon ?? '',
-    iconUrl: entry.iconUrl ?? entry.icon_url ?? '',
-    screenshotUrls: entry.screenshotUrls ?? entry.screenshot_urls ?? [],
-    categories: entry.categories ?? [],
-    platforms: entry.platforms ?? [],
-    commands: (entry.commands ?? []).map((cmd: any) => ({
-      name: cmd.name ?? '',
-      title: cmd.title ?? '',
-      description: cmd.description ?? '',
-    })),
-    installCount: entry.installCount ?? entry.install_count ?? 0,
-  }));
-}
-
-/** Get single extension details from the backend. */
-export async function getExtensionDetails(
-  name: string,
-): Promise<CatalogEntry | null> {
-  try {
-    const entry = await jsonRequest<any>(
-      'GET',
-      `/extensions/${encodeURIComponent(name)}`,
-    );
-    return {
-      name: entry.name ?? '',
-      title: entry.title ?? '',
-      description: entry.description ?? '',
-      author: entry.author ?? '',
-      contributors: entry.contributors ?? [],
-      icon: entry.icon ?? '',
-      iconUrl: entry.iconUrl ?? entry.icon_url ?? '',
-      screenshotUrls: entry.screenshotUrls ?? entry.screenshot_urls ?? [],
-      categories: entry.categories ?? [],
-      platforms: entry.platforms ?? [],
-      commands: (entry.commands ?? []).map((cmd: any) => ({
-        name: cmd.name ?? '',
-        title: cmd.title ?? '',
-        description: cmd.description ?? '',
-      })),
-      installCount: entry.installCount ?? entry.install_count ?? 0,
-    };
-  } catch {
-    return null;
-  }
-}
-
 /** Get a download URL for the extension bundle from the backend. */
 export async function getExtensionBundleUrl(
   name: string,
@@ -244,37 +157,5 @@ export async function getExtensionScreenshotsFromAPI(
     );
   } catch {
     return [];
-  }
-}
-
-/** Report an install event to the backend (fire-and-forget). */
-export async function reportInstall(
-  name: string,
-  machineId?: string,
-): Promise<void> {
-  try {
-    await jsonRequest<{ ok: boolean }>(
-      'POST',
-      `/extensions/${encodeURIComponent(name)}/install`,
-      machineId ? { machineId } : {},
-    );
-  } catch (err) {
-    console.warn('Failed to report install:', err);
-  }
-}
-
-/** Report an uninstall event to the backend (fire-and-forget). */
-export async function reportUninstall(
-  name: string,
-  machineId?: string,
-): Promise<void> {
-  try {
-    await jsonRequest<{ ok: boolean }>(
-      'POST',
-      `/extensions/${encodeURIComponent(name)}/uninstall`,
-      machineId ? { machineId } : {},
-    );
-  } catch (err) {
-    console.warn('Failed to report uninstall:', err);
   }
 }

@@ -3,14 +3,15 @@
  *
  * Fetches, caches, installs, and uninstalls community extensions.
  *
- * Primary strategy: API-based (supercmd-backend)
- *   - No git or npm required on user's machine
- *   - Fast search/discovery via backend API
- *   - Pre-built bundles downloaded from S3
+ * Default strategy: GitHub
+ *   - Catalog via git sparse-checkout of raycast/extensions
+ *   - Installs via GitHub raw download + bun/npm + esbuild
+ *   - Requires git and bun/npm on the user's machine
  *
- * Fallback strategy: git sparse-checkout + npm (only when API returns non-2xx)
- *   - Requires git and npm installed on user's machine
- *   - Used as fallback when backend API is unavailable
+ * Optional strategy: a self-hosted backend, used only when the user sets
+ * `extensionApiUrl`. Serves catalog and pre-built bundles, which makes installs
+ * much faster and drops the git/npm requirement. There is no default endpoint —
+ * a stock build talks to no extension backend at all.
  */
 
 import { app, dialog } from 'electron';
@@ -29,8 +30,7 @@ import {
   fetchCatalogFromAPI,
   getExtensionBundleUrl,
   getExtensionScreenshotsFromAPI,
-  reportInstall,
-  reportUninstall,
+  isExtensionApiConfigured,
 } from './extension-api';
 import { installDepsWithBun } from './bun-manager';
 
@@ -794,8 +794,8 @@ export async function getCatalog(
     }
   }
 
-  // PRIMARY: Fetch from supercmd-backend API
-  try {
+  // OPTIONAL: self-hosted backend, only when the user configured one
+  if (isExtensionApiConfigured()) try {
     console.log('Fetching extension catalog from API…');
     const entries = await fetchCatalogFromAPI();
 
@@ -849,8 +849,8 @@ export async function getCatalog(
 export async function getExtensionScreenshotUrls(name: string): Promise<string[]> {
   if (!name) return [];
 
-  // PRIMARY: Try backend API
-  try {
+  // OPTIONAL: self-hosted backend, only when the user configured one
+  if (isExtensionApiConfigured()) try {
     const urls = await getExtensionScreenshotsFromAPI(name);
     if (urls.length > 0) return urls;
   } catch (apiError: any) {
@@ -1029,8 +1029,10 @@ export function getInstalledExtensionNames(): string[] {
  * Install a community extension by name.
  *
  * Strategy:
- *   1. PRIMARY: Download pre-built bundle from API (no git/npm needed)
- *   2. FALLBACK: git sparse-checkout + npm install (if API returns non-2xx)
+ *   1. Pre-built bundle from a self-hosted backend — skipped unless
+ *      `extensionApiUrl` is set (no git/npm needed, fastest)
+ *   2. GitHub raw source download + bun/npm + esbuild (the default path)
+ *   3. git sparse-checkout + npm install (last resort)
  */
 export async function installExtension(
   name: string,
@@ -1044,11 +1046,12 @@ export async function installExtension(
     return false;
   }
 
-  // 1. FASTEST: Pre-built bundle from S3 (~2-3s, no npm/bun/esbuild needed).
-  // Callers can opt out (e.g. recovering from an incomplete bundle that
+  // 1. FASTEST: pre-built bundle from a self-hosted backend (~2-3s, no
+  // npm/bun/esbuild needed). Skipped entirely unless the user configured one.
+  // Callers can also opt out (e.g. recovering from an incomplete bundle that
   // installed `.sc-build/` without source) so we go straight to the source-
   // download path on retry.
-  if (!options?.skipBundle) {
+  if (!options?.skipBundle && isExtensionApiConfigured()) {
     try {
       const success = await installExtensionFromBundle(name, options?.onProgress);
       if (success) return true;
@@ -1150,9 +1153,6 @@ async function installExtensionFromBundle(
     if (backupPath && fs.existsSync(backupPath)) {
       fs.rmSync(backupPath, { recursive: true, force: true });
     }
-
-    // Report install (fire-and-forget)
-    reportInstall(name, getMachineId()).catch(() => {});
 
     console.log(`Extension "${name}" installed from pre-built bundle in ${Date.now() - t0}ms`);
     return true;
@@ -1259,9 +1259,6 @@ async function installExtensionViaAPI(name: string): Promise<boolean> {
     if (backupPath && fs.existsSync(backupPath)) {
       fs.rmSync(backupPath, { recursive: true, force: true });
     }
-
-    // Report install to backend (fire-and-forget)
-    reportInstall(name, getMachineId()).catch(() => {});
 
     return true;
   } catch (error) {
@@ -1499,38 +1496,17 @@ function extractTarGz(buffer: Buffer, destDir: string): void {
   }
 }
 
-// ─── Machine ID ─────────────────────────────────────────────────────
-
-let _machineId: string | null = null;
+// ─── Legacy identifier cleanup ──────────────────────────────────────
 
 /**
- * Get or generate a persistent anonymous machine ID for install tracking.
- * Stored in the user data directory — no PII.
+ * Delete the persistent install-tracking ID written by earlier versions.
+ * Nothing generates or sends it any more; this removes the dormant file from
+ * machines that ran a build which did.
  */
-function getMachineId(): string {
-  if (_machineId) return _machineId;
-
-  const idPath = path.join(app.getPath('userData'), '.machine-id');
+export function removeLegacyMachineId(): void {
   try {
-    const existing = fs.readFileSync(idPath, 'utf-8').trim();
-    if (existing) {
-      _machineId = existing;
-      return existing;
-    }
+    fs.rmSync(path.join(app.getPath('userData'), '.machine-id'), { force: true });
   } catch {}
-
-  // Generate a random UUID
-  const id = `${randomHex(8)}-${randomHex(4)}-${randomHex(4)}-${randomHex(4)}-${randomHex(12)}`;
-  try {
-    fs.writeFileSync(idPath, id);
-  } catch {}
-  _machineId = id;
-  return id;
-}
-
-function randomHex(length: number): string {
-  const bytes = require('crypto').randomBytes(Math.ceil(length / 2));
-  return bytes.toString('hex').slice(0, length);
 }
 
 /**
@@ -1547,9 +1523,6 @@ export async function uninstallExtension(name: string): Promise<boolean> {
     fs.rmSync(installPath, { recursive: true, force: true });
     invalidateExtensionRunnerCaches();
     console.log(`Extension "${name}" uninstalled.`);
-
-    // Report uninstall to backend (fire-and-forget)
-    reportUninstall(name, getMachineId()).catch(() => {});
 
     return true;
   } catch (error) {

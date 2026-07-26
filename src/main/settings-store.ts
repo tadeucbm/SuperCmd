@@ -273,6 +273,14 @@ export interface AppSettings {
   autoQuitApps: { bundleId: string; appName: string; appPath: string; timeoutSeconds: number }[];
   // Auto Quit: default timeout in seconds (used when adding new apps)
   autoQuitDefaultTimeoutSeconds: number;
+  // Base URL of a self-hosted extension backend. Empty (the default) disables
+  // the API entirely and routes discovery/install through GitHub, so a stock
+  // build talks to no extension backend at all.
+  extensionApiUrl: string;
+  // URL of a self-hosted Canvas (Excalidraw) bundle tarball. Empty (the
+  // default) means Canvas is only available from a locally built
+  // canvas-app/dist/.
+  canvasBundleUrl: string;
 }
 
 const DEFAULT_HYPER_KEY_SETTINGS: HyperKeySettings = {
@@ -398,6 +406,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   extensionCommandArguments: {},
   autoQuitApps: [],
   autoQuitDefaultTimeoutSeconds: 180,
+  extensionApiUrl: '',
+  canvasBundleUrl: '',
 };
 
 let settingsCache: AppSettings | null = null;
@@ -1296,6 +1306,8 @@ export function loadSettings(): AppSettings {
       extensionCommandArguments: normalizeExtensionStorageMap(parsed.extensionCommandArguments),
       autoQuitApps: Array.isArray(parsed.autoQuitApps) ? parsed.autoQuitApps : DEFAULT_SETTINGS.autoQuitApps,
       autoQuitDefaultTimeoutSeconds: typeof parsed.autoQuitDefaultTimeoutSeconds === 'number' ? parsed.autoQuitDefaultTimeoutSeconds : DEFAULT_SETTINGS.autoQuitDefaultTimeoutSeconds,
+      extensionApiUrl: typeof parsed.extensionApiUrl === 'string' ? parsed.extensionApiUrl : DEFAULT_SETTINGS.extensionApiUrl,
+      canvasBundleUrl: typeof parsed.canvasBundleUrl === 'string' ? parsed.canvasBundleUrl : DEFAULT_SETTINGS.canvasBundleUrl,
     };
   } catch {
     // settings.json missing or malformed (fresh install, sync not yet

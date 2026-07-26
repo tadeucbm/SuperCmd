@@ -23,17 +23,43 @@ Discov occupies a central role in your workflow — it sees your keystrokes, cli
 SuperCmd shipped an [Aptabase](https://aptabase.com/) `app_started` event, and
 that integration was removed in this fork along with its dependency.
 
-The only outbound reporting left is extension install/uninstall counts, covered
-below.
+There is no outbound reporting of any kind. Discov generates no machine or
+install identifier.
 
-### Extension Install/Uninstall Reporting
+### No Upstream SuperCmd Traffic
 
-When you install or uninstall an extension, the following is sent to `https://api.supercmd.sh`:
+Discov is a fork of SuperCmd and sends **nothing** to the upstream project's
+infrastructure. Specifically, these were removed:
 
-- Extension name (e.g. `raycast/github`)
-- An **anonymous machine ID** — a randomly generated hex string stored at `~/Library/Application Support/Discov/.machine-id`
+- **Extension install/uninstall reporting** — previously sent the extension name
+  plus a persistent random machine ID to `api.supercmd.sh`. Gone, along with the
+  `.machine-id` file, which is deleted on startup if an older build created it.
+- **Extension catalog and bundle downloads** — previously served by
+  `api.supercmd.sh`. Discovery and installs now go to GitHub. A self-hosted
+  backend can be used instead via the `extensionApiUrl` setting; there is no
+  default endpoint.
+- **Managed OAuth proxy** — Linear, Spotify and Jira sign-in previously routed
+  through `api.supercmd.sh`, which held the client secret, completed the token
+  exchange server-side and returned a finished access token. That put your live
+  provider token through third-party infrastructure. All OAuth now goes directly
+  to the provider. See [OAuth](#oauth) below.
+- **Canvas bundle** — previously downloaded from an upstream S3 bucket. Now built
+  locally or served from a URL you configure (`canvasBundleUrl`).
 
-This is used for install/download count metrics on the extension catalog.
+These hosts are additionally **blocked at the network layer**
+(`src/main/blocked-hosts.ts`), covering both Electron session traffic and
+main-process Node requests, so a future refactor or a merged upstream commit
+cannot silently reintroduce a call. A test in the suite fails the build if either
+host reappears in the source or the built app.
+
+### OAuth
+
+OAuth flows go directly from your device to the provider, using PKCE. Because the
+upstream proxy is gone, the built-in Linear, Spotify and Jira integrations no
+longer ship a default client ID — the ones they carried were upstream's
+registrations and only resolved inside the proxy. Supply your own client ID (in
+the extension, or in the auth prompt), or use a personal access token, which
+skips OAuth entirely.
 
 ---
 
@@ -41,13 +67,12 @@ This is used for install/download count metrics on the extension catalog.
 
 | Destination | What is sent | When | Controlled by |
 |---|---|---|---|
-| `https://api.supercmd.sh` | Extension name + anonymous machine ID | On extension install/uninstall | Extension store usage |
-| `https://api.supercmd.sh` | Extension name | When browsing the extension catalog | Extension store usage |
+| GitHub (`raw.githubusercontent.com`, `api.github.com`, `github.com`) | Extension name | When browsing the catalog or installing an extension | Extension store usage |
 | Your configured AI provider (OpenAI / Anthropic / Gemini / custom) | Your prompt + system prompt | When you use AI features | AI settings |
 | `http://localhost:11434` | Your prompt | When using Ollama | AI settings (local) |
 | `https://api.supermemory.ai` | Memory snippets (up to ~2,400 chars) | When Supermemory integration is enabled | Memory settings |
 | GitHub Releases API | App version string | On auto-update check | Built-in updater |
-| Extension CDN / S3 | Binary download | On extension install | Extension store usage |
+| Your own extension backend (`extensionApiUrl`) | Extension name | When browsing the catalog or installing | Opt-in; unset by default |
 
 ---
 
@@ -59,12 +84,11 @@ Nothing to disable — analytics were removed from this fork. The
 `@aptabase/electron` dependency is gone, so no build-time or runtime opt-out is
 needed.
 
-### Disable Extension Install Reporting
+### Extension Install Reporting
 
-To opt out of install/uninstall reporting:
-
-1. Delete `~/Library/Application Support/Discov/.machine-id` to discard the current anonymous ID.
-2. Build from source and remove the `reportInstall()` / `reportUninstall()` calls in `src/main/extension-api.ts`.
+Nothing to disable — install/uninstall reporting was removed from this fork, and
+no machine identifier is generated. If an older build created a `.machine-id`
+file, Discov deletes it on startup.
 
 ### Disable Clipboard History
 
@@ -141,7 +165,7 @@ Treat installing an extension like installing any other macOS app — it runs wi
 
 ## Known Limitations
 
-1. **No telemetry opt-out UI** — must block at the network level or build from source.
+1. **No settings UI for `extensionApiUrl` / `canvasBundleUrl`** — both must be set by editing `settings.json` directly.
 2. **API keys stored in plain text** — not using macOS Keychain yet.
 3. **No per-extension sandboxing** — all extensions share the same IPC surface.
 4. **IPC handlers lack sender validation** — relies on Electron's process isolation.

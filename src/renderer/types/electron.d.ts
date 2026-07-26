@@ -924,12 +924,6 @@ export interface ElectronAPI {
   getInstalledExtensionNames: () => Promise<string[]>;
   installExtension: (name: string) => Promise<boolean>;
   uninstallExtension: (name: string) => Promise<boolean>;
-  searchExtensions: (
-    query: string,
-    options?: { category?: string; limit?: number; offset?: number },
-  ) => Promise<{ results: CatalogEntry[]; total: number }>;
-  getPopularExtensions: (limit?: number) => Promise<CatalogEntry[]>;
-  getExtensionDetails: (name: string) => Promise<CatalogEntry | null>;
   onExtensionsChanged: (callback: () => void) => (() => void);
   onExtensionUninstalled: (callback: (extensionName: string) => void) => (() => void);
   onExtensionInstallStatus: (callback: (message: string) => void) => (() => void);

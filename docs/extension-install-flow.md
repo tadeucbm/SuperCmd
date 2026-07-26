@@ -2,7 +2,11 @@
 
 ## Overview
 
-Discov installs Raycast-compatible extensions without requiring git or npm on the user's machine. Extensions are discovered via a backend API (supercmd-backend) backed by a PostgreSQL database and S3 storage.
+Discov installs Raycast-compatible extensions from GitHub by default: the catalog comes from a sparse checkout of `raycast/extensions`, and installs download source from GitHub raw and build it locally with bun/npm + esbuild. This requires `git` and `bun`/`npm` on the user's machine.
+
+A backend can optionally serve the catalog and pre-built bundles instead, which is much faster and removes the git/npm requirement. **There is no default endpoint** — Discov ships pointing at no backend at all, and talks to one only when the user sets `extensionApiUrl`. The rest of this document describes that optional backend, which was inherited from upstream SuperCmd; you would need to host your own.
+
+> **Note:** upstream's hosts (`api.supercmd.sh`, `supercmd-extensions.s3.amazonaws.com`) are blocked at the network layer in `src/main/blocked-hosts.ts` and cannot be used, even if configured by hand. See [SECURITY.md](../SECURITY.md).
 
 ---
 
@@ -36,7 +40,8 @@ Launcher (Electron)
 
 When a user installs an extension, three methods are tried in order:
 
-### 1. Pre-built Bundle (fastest, ~2-3s)
+### 1. Pre-built Bundle (fastest, ~2-3s) — only when `extensionApiUrl` is set
+- **Skipped entirely on a stock build**, which has no backend configured
 - Calls `GET /extensions/:name/bundle` on the backend
 - Backend returns a pre-signed S3 URL for `bundles/{name}.tar.gz`
 - Tarball contains: `package.json` + `assets/` + `.sc-build/*.js` (esbuild output)
@@ -61,8 +66,8 @@ When a user installs an extension, three methods are tried in order:
 
 ## Catalog Discovery Fallback Chain
 
-1. **Backend API** (`GET /extensions/catalog`) — returns full catalog from DB
-2. **Git sparse-checkout** — clones only `package.json` files (requires git)
+1. **Backend API** (`GET /extensions/catalog`) — skipped unless `extensionApiUrl` is set
+2. **Git sparse-checkout** — clones only `package.json` files (requires git). The default path.
 3. **Disk cache** — `~/Library/Application Support/Discov/extension-catalog.json` (even if expired)
 
 ---
@@ -120,7 +125,7 @@ When a user installs an extension, three methods are tried in order:
 
 ### Environment Variables
 - `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` — S3 access
-- `S3_EXTENSIONS_BUCKET` — bucket name (default: `supercmd-extensions`)
+- `S3_EXTENSIONS_BUCKET` — bucket name (no default; set it to your own bucket)
 - `EXTENSIONS_WEBHOOK_SECRET` — shared secret for GHA webhook auth
 
 ---
@@ -128,28 +133,26 @@ When a user installs an extension, three methods are tried in order:
 ## Launcher Files
 
 ### Key Files
-- `src/main/extension-api.ts` — API client for supercmd-backend (Node.js https, zero deps)
+- `src/main/extension-api.ts` — optional backend client (Node.js https, zero deps). Inert unless `extensionApiUrl` is set.
 - `src/main/extension-registry.ts` — install orchestrator, catalog fetching, 3-tier fallback
 - `src/main/bun-manager.ts` — on-demand Bun binary download and dep installation
-- `src/main/preload.ts` — IPC bridge for `searchExtensions`, `getPopularExtensions`, `getExtensionDetails`, `onExtensionInstallStatus`
-- `src/renderer/types/electron.d.ts` — TypeScript types for new IPC methods
-- `src/renderer/src/settings/StoreTab.tsx` — extension store UI (search, install, status)
+- `src/main/blocked-hosts.ts` — upstream host blocklist, enforced for both session and main-process traffic
+- `src/main/preload.ts` — IPC bridge for `onExtensionInstallStatus`
+- `src/renderer/src/settings/StoreTab.tsx` — extension store UI (search, install, status). Search filters the locally cached catalog.
 
 ### IPC Channels
-- `search-extensions` → backend API with local catalog filter fallback
-- `get-popular-extensions` → backend API, returns `[]` on failure
-- `get-extension-details` → backend API with catalog lookup fallback
 - `extension-install-status` → main→renderer push for install progress messages
 
 ### Settings
-- `extensionApiUrl` — backend URL (defaults to the upstream `https://api.supercmd.sh`; see the rebrand TODO in `src/main/extension-api.ts`)
+- `extensionApiUrl` — backend URL. Empty by default, which disables the API entirely and routes everything through GitHub. Upstream hosts are rejected.
+- `canvasBundleUrl` — Canvas (Excalidraw) bundle tarball URL. Empty by default; Canvas then requires a locally built `canvas-app/dist/`.
 
 ---
 
 ## S3 Bucket Structure
 
 ```
-s3://supercmd-extensions/
+s3://$S3_EXTENSIONS_BUCKET/
 ├── catalog/
 │   └── catalog.json          # Full extension metadata index
 └── bundles/
@@ -189,10 +192,10 @@ No `node_modules` — all dependencies are bundled into the `.js` files by esbui
 node supercmd-backend/scripts/build-catalog.js /tmp/catalog-output
 
 # 2. Upload catalog to S3
-aws s3 cp /tmp/catalog-output/catalog.json s3://supercmd-extensions/catalog/catalog.json
+aws s3 cp /tmp/catalog-output/catalog.json s3://$S3_EXTENSIONS_BUCKET/catalog/catalog.json
 
 # 3. Trigger backend re-index
-curl -X POST "https://api.supercmd.sh/extensions/webhook/sync" \
+curl -X POST "$EXTENSION_API_URL/extensions/webhook/sync" \
   -H "Content-Type: application/json" \
   -H "X-Webhook-Secret: YOUR_SECRET"
 
@@ -201,7 +204,7 @@ cd supercmd-backend && npm install esbuild --no-save --prefix scripts
 node scripts/build-extensions.js /tmp/catalog-output/catalog.json /tmp/build-output
 
 # 5. Upload bundles to S3
-aws s3 sync /tmp/build-output/bundles/ s3://supercmd-extensions/bundles/ \
+aws s3 sync /tmp/build-output/bundles/ s3://$S3_EXTENSIONS_BUCKET/bundles/ \
   --cache-control "public, max-age=3600" --size-only
 
 # 6. Clean up

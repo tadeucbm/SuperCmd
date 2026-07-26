@@ -349,7 +349,9 @@ When contributing:
 
 ## Key Documentation
 
-- **Extension Install Flow**: See `docs/extension-install-flow.md` for the complete extension discovery, installation, and pre-building pipeline. Covers the 3-tier install fallback (S3 bundle → source download + Bun → git), the GitHub Actions sync workflow, the backend API (`supercmd-backend/src/extensions/`), Bun manager, S3 bucket structure, and local manual sync commands. **Read this before making any changes to extension installation, the backend extensions module, or the GHA workflow.**
+- **Extension Install Flow**: See `docs/extension-install-flow.md` for the complete extension discovery, installation, and pre-building pipeline. Covers the 3-tier install fallback (optional backend bundle → source download + Bun → git), the GitHub Actions sync workflow, the optional self-hosted backend API, Bun manager, S3 bucket structure, and local manual sync commands. **Read this before making any changes to extension installation, the backend extensions module, or the GHA workflow.**
+
+- **No upstream SuperCmd traffic**: Discov sends nothing to upstream infrastructure. `api.supercmd.sh` and `supercmd-extensions.s3.amazonaws.com` are blocked in `src/main/blocked-hosts.ts` (enforced for both Electron session traffic and main-process Node requests), and `scripts/test-no-upstream-hosts.mjs` fails the build if either host reappears in source or `dist/`. Do not add a default endpoint pointing at either — the extension backend (`extensionApiUrl`) and Canvas bundle (`canvasBundleUrl`) are opt-in settings with no default. See `SECURITY.md`.
 
 ## Resources
 

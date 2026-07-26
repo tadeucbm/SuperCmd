@@ -335,8 +335,9 @@ OAuth tokens are stored separately in `~/Library/Application Support/Discov/oaut
 Discov is open-source, so you can audit exactly what it does. The short version:
 
 - **Telemetry**: none. Discov sends no analytics events.
+- **Upstream SuperCmd infrastructure**: nothing. Discov contacts no upstream host, and those hosts are blocked at the network layer so a future change cannot reintroduce a call.
 - **AI prompts**: sent directly from your device to your configured provider (OpenAI / Anthropic / Gemini / Ollama).
-- **Extension install/uninstall**: reports extension name + an anonymous random machine ID to `api.supercmd.sh` for download counts.
+- **Extensions**: discovered and downloaded from GitHub. No install/uninstall reporting, and no machine identifier is generated.
 
 See **[SECURITY.md](./SECURITY.md)** for the full breakdown.
 
